@@ -1,10 +1,25 @@
 const express = require('express');
-const app = express()
+const customersRoutes = require('./routes/customerRoutes')
 
-app.get('/', (req,res) => {
-    res.send('bunda');
-})
 
-app.listen('3030', () => {
-    console.log('Rodando na porta 3030');
+con.connect((err) => {
+    if (err) {
+        console.error('Erro ao conectar ao banco de dados:', err);
+    } else {
+        console.log('Conectado ao banco de dados');
+    }
+});
+
+const app = express();
+
+app.get('/', (req, res) => {
+    res.send('home');
+});
+
+app.use('/customers', customersRoutes);
+
+
+const PORT = 3030;
+app.listen(PORT, () => {
+    console.log(`Rodando na porta ${PORT}`);
 });
