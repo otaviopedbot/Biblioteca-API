@@ -1,19 +1,14 @@
 const express = require('express');
 const customersRoutes = require('./routes/customerRoutes')
-
-
-con.connect((err) => {
-    if (err) {
-        console.error('Erro ao conectar ao banco de dados:', err);
-    } else {
-        console.log('Conectado ao banco de dados');
-    }
-});
+const path = require('path')
 
 const app = express();
 
+app.set('view engine','ejs')
+app.set('views',path.join(__dirname, '/views'))
+
 app.get('/', (req, res) => {
-    res.send('home');
+    res.render('customers/index');
 });
 
 app.use('/customers', customersRoutes);
