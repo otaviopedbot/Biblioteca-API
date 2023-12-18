@@ -1,87 +1,88 @@
-// controllers/CustomerController.js
 const Customer = require('../models/Customer');
 
-class CustomerController {
+// visualizações:
 
-    static getAll(req, res) {
-        const customers = Customer.getAll((err, results) => {
-            if (err) {
-                res.status(500);
-            } else {
-                res.results;
-            }
-        res.render('customers/index', {customers})
-        });
-    }
+module.exports.index = (req, res) => {
+    Customer.getAll((err, customers) => {
+        if (err) {
+            console.error('Erro ao obter clientes:', err);
+        } else {
+            res.render('customers/index', { customers });
+        }
+    });
+};
 
-    static getById(req, res) {
-        const id = req.params.id;
-        Customer.getById(id, (err, result) => {
-            if (err) {
-                res.status(500).json({ error: 'Erro interno do servidor' });
-            } else if (!result) {
-                res.status(404).json({ error: 'Cliente não encontrado' });
-            } else {
-                res.json(result);
-            }
-        });
-    }
+module.exports.showCustomer = (req, res) => {
+    const customerId = req.params.id;
 
-    static create(req, res) {
-        const { name, phone, address } = req.body;
-        const customer = new Customer({ name, phone, address });
+    Customer.getById(customerId, (err, customer) => {
+        if (err) {
+            console.log('Erro ao obter cliente por ID:', err);
+        } else {
+            res.render('customers/show', { customer });
+        }
+    });
+};
 
-        customer.save((err, result) => {
-            if (err) {
-                res.status(500).json({ error: 'Erro interno do servidor' });
-            } else {
-                res.status(201).json(result);
-            }
-        });
-    }
 
-    static update(req, res) {
-        const id = req.params.id;
-        const { name, phone, address } = req.body;
+module.exports.renderEditForm = (req, res) => {
+    const customerId = req.params.id;
 
-        Customer.getById(id, (err, existingCustomer) => {
-            if (err) {
-                res.status(500).json({ error: 'Erro interno do servidor' });
-            } else if (!existingCustomer) {
-                res.status(404).json({ error: 'Cliente não encontrado' });
-            } else {
-                const customer = new Customer({ id, name, phone, address });
+    Customer.getById(customerId, (err, customer) => {
+        if (err) {
+            console.log('Erro ao obter cliente por ID:', err);
+            return;
+        }
 
-                customer.update((err, result) => {
-                    if (err) {
-                        res.status(500).json({ error: 'Erro interno do servidor' });
-                    } else {
-                        res.json(result);
-                    }
-                });
-            }
-        });
-    }
+        if (!customer) {
+            console.log('Cliente não encontrado');
+            res.redirect('/clientes');
+            return;
+        }
 
-    static delete(req, res) {
-        const id = req.params.id;
+        res.render('customers/edit', { customer });
+    });
+};
 
-        Customer.getById(id, (err, existingCustomer) => {
-            if (err) {
-                res.status(500).json({ error: 'Erro interno do servidor' });
-            } else if (!existingCustomer) {
-                res.status(404).json({ error: 'Cliente não encontrado' });
-            } else {
-                existingCustomer.delete((err, result) => {
-                    if (err) {
-                        res.status(500).json({ error: 'Erro interno do servidor' });
-                    } else {
-                        res.json(result);
-                    }
-                });
-            }
-        });
-    }
+
+module.exports.renderNewForm = (req, res) => {
+    res.render('customers/new')
 }
 
-module.exports = CustomerController;
+
+// metodos:
+
+module.exports.editCustomer = async (req, res) => {
+
+    const customerId = req.params;
+    const customer = req.body + customerId
+
+    customer.update((err, updatedCustomer) => {
+        if (err) {
+            console.error('Erro ao atualizar cliente:', err);
+        } else {
+            console.log('Cliente atualizado com sucesso:', updatedCustomer);
+
+            res.redirect(`/customers/${customerId}`);
+        }
+    });
+
+}
+
+module.exports.createCustomer = async (req, res) => {
+
+    const newCustomer = new Customer(req.body);
+
+    newCustomer.save((err, savedCustomer) => {
+        if (err) {
+            console.error('Erro ao criar cliente:', err);
+        } else {
+            console.log('Cliente criado com sucesso:', savedCustomer);
+
+            res.redirect('/customers');
+        }
+    });
+};
+
+module.exports.deleteCustomer = async (req, res) => {
+}

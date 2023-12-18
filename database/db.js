@@ -1,14 +1,6 @@
 const mysql = require('mysql');
 
-con.connect((err) => {
-    if (err) {
-        console.error('Erro ao conectar ao banco de dados:', err);
-    } else {
-        console.log('Conectado ao banco de dados');
-    }
-});
-
-const con = mysql.createConnection({
+const db = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
@@ -16,4 +8,12 @@ const con = mysql.createConnection({
     database: 'library'
 });
 
-module.exports = con;
+db.connect((err) => {
+    if (err) {
+        console.error('Erro ao conectar ao banco de dados:', err);
+    } else {
+        console.log('Conectado ao banco de dados');
+    }
+});
+
+module.exports = db;

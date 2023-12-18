@@ -1,15 +1,20 @@
 const express = require('express');
 const router = express.Router();
+const CustomerController = require('../controllers/CustomerController');
 
-router.get('/customers', (req, res) => {
-    con.query('select * from  books', (err, result) => {
-        if (err) {
-            console.error('Erro na consulta SQL:', err);
-            res.status(500).send('Erro interno do servidor');
-        } else {
-            res.send(result);
-        }
-    });
-});
+router.route('/')
+    .get(CustomerController.index)
+    .post(CustomerController.createCustomer)
+
+router.get('/new', CustomerController.renderNewForm);
+
+router.route('/:id')
+    .delete(CustomerController.deleteCustomer)
+    .put(CustomerController.editCustomer)
+    .get(CustomerController.showCustomer)
+
+router.get('/:id/edit',(CustomerController.renderEditForm))
+
+
 
 module.exports = router;

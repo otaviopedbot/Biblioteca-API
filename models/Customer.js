@@ -3,14 +3,21 @@ const db = require('../database/db');
 
 class Customer {
 
-    constructor({ name, phone, address }) {
+    constructor({ name, phone, adress }) {
         this.name = name;
         this.phone = phone;
-        this.address = address;
+        this.adress = adress;
     }
 
     static getAll(callback) {
-        db.query('SELECT * FROM customers', callback);
+        db.query('SELECT * FROM customers', (err, results) => {
+            if (err) {
+                console.error('Erro ao executar a consulta:', err);
+                callback(err, null);
+            } else {
+                callback(null, results);
+            }
+        });
     }
 
     static getById(id, callback) {
@@ -18,7 +25,7 @@ class Customer {
     }
 
     save(callback) {
-        db.query('INSERT INTO customers (name, phone, address) VALUES (?, ?, ?)', [this.name, this.phone, this.address], (err, results) => {
+        db.query('INSERT INTO customers (name, phone, adress) VALUES (?, ?, ?)', [this.name, this.phone, this.adress], (err, results) => {
             if (err) {
                 callback(err, null);
             } else {
@@ -29,7 +36,7 @@ class Customer {
     }
 
     update(callback) {
-        db.query('UPDATE customers SET name = ?, phone = ?, address = ? WHERE id = ?', [this.name, this.phone, this.address, this.id], (err) => {
+        db.query('UPDATE customers SET name = ?, phone = ?, adress = ? WHERE id = ?', [this.name, this.phone, this.adress, this.id], (err) => {
             callback(err, this);
         });
     }

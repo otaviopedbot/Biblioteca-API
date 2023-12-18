@@ -1,14 +1,21 @@
+<!-- views/customers/index.ejs -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>customers</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customers</title>
 </head>
+
 <body>
-    <h1>Customers</h1>
-    <ul>
-        <li><%= customers %></li>
-    </ul>
+  <h1>Customers</h1>
+  <ul>
+    <% for(let customer of customers) { %>
+      <li>Name: <%= customer.name %>, Phone: <%= customer.phone %>, Adress: <%= customer.adress %> - <a href="/customers/<%= customer.id %>">show</a>, <a href="/customers/<%= customer.id %>/edit">edit</a>, <a href="/customers">delete</a>
+      </li>
+      <% }; %>
+  </ul>
 </body>
+
 </html>
