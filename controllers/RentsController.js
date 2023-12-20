@@ -1,5 +1,6 @@
 const Rent = require('../models/Rent');
 
+
 // visualizações:
 
 module.exports.index = (req, res) => {
@@ -24,7 +25,6 @@ module.exports.showRent = (req, res) => {
     });
 };
 
-
 module.exports.renderEditForm = (req, res) => {
     const rentsId = req.params.id;
 
@@ -44,7 +44,6 @@ module.exports.renderEditForm = (req, res) => {
     });
 };
 
-
 module.exports.renderNewForm = (req, res) => {
     res.render('rents/new')
 }
@@ -56,17 +55,15 @@ module.exports.renderNewForm = (req, res) => {
 module.exports.createRent = (req, res) => {
     const newrent = new Rent(req.body);
 
-    // Salvar o emprestimo (incluindo validações)
     newrent.save((err, savedRent) => {
         if (err) {
-            console.error('Erro ao criar emprestimo:', err.message);  // Exibindo a mensagem de erro da model
+            console.error('Erro ao criar emprestimo:', err.message);
         } else {
             console.log('emprestimo criado com sucesso:', savedRent);
             res.redirect('/rents');
         }
     });
 };
-
 
 
 module.exports.editRent = (req, res) => {

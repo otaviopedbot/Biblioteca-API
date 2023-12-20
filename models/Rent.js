@@ -33,7 +33,7 @@ class Rent {
 
         Book.getById(bookId, (err, book) => {
             if (err) {
-                console.log('Erro ao obter livro por ID:', err);
+                console.log('Erro ao obter livro por ID');
             }
         })
 
@@ -51,7 +51,7 @@ class Rent {
 
 
     update(callback) {
-        db.query('UPDATE rents SET date = ?, customer_id = ?, book_id = ? WHERE id = ?', [this.date, this.customer_id, this.book_id], (err) => {
+        db.query('UPDATE rents SET date = ?, customer_id = ?, book_id = ? WHERE id = ?', [this.date, this.customer_id, this.book_id, this.author_id, this.rentshelve_id, this.id], (err) => {
             callback(err, this);
         });
     }
