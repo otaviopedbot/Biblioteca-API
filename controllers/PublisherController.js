@@ -71,9 +71,9 @@ module.exports.createPublisher = async (req, res) => {
 
 module.exports.editPublisher = (req, res) => {
     const publisherId = req.params.id;
-    const { name } = req.body;
+    const { name, phone } = req.body;
 
-    const updatedPublisher = new Publisher({ name });
+    const updatedPublisher = new Publisher({ name, phone });
     updatedPublisher.id = publisherId;
 
     updatedPublisher.update((err, result) => {

@@ -1,8 +1,12 @@
 const express = require('express');
+
 const customersRoutes = require('./routes/customersRoutes')
 const authorsRoutes = require('./routes/authorsRoutes')
 const bookshelvesRoutes = require('./routes/bookshelvesRoutes')
 const publishersRoutes = require('./routes/publishersRoutes')
+const booksRoutes = require('./routes/booksRoutes')
+const rentsRoutes = require('./routes/rentsRoutes')
+
 const path = require('path')
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
@@ -25,6 +29,8 @@ app.use('/customers', customersRoutes);
 app.use('/authors', authorsRoutes);
 app.use('/bookshelves', bookshelvesRoutes);
 app.use('/publishers', publishersRoutes);
+app.use('/books', booksRoutes);
+app.use('/rents', rentsRoutes);
 
 
 const PORT = 3031;

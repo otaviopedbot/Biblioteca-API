@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>books</title>
+</head>
+
+<body>
+  <h1>Books</h1>
+  <h2><a href="/books/new">New book</a></h2>
+  <ul>
+    <% for(let book of books) { %>
+      <a href="/books/<%= book.id %>">
+      <li>
+        ID: <%= book.id %>, 
+        Title: <%= book.title %>, 
+        Pages: <%= book.page %>
+        Copys: <%= book.quantity %>, 
+        Author ID: <%= book.author_id %>, 
+        Bookshelve ID: <%= book.bookshelve_id %>
+      </li>
+      </a>
+    <% }; %>
+    <a href="/">return</a>
+  </ul>
+</body>
+
+</html>

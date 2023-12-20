@@ -13,9 +13,9 @@ module.exports.index = (req, res) => {
 };
 
 module.exports.showAuthor = (req, res) => {
-    const customerId = req.params.id;
+    const authorId = req.params.id;
 
-    Author.getById(customerId, (err, author) => {
+    Author.getById(authorId, (err, author) => {
         if (err) {
             console.log('Erro ao obter autor por ID:', err);
         } else {

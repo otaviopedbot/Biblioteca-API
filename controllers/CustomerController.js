@@ -36,7 +36,7 @@ module.exports.renderEditForm = (req, res) => {
 
         if (!customer) {
             console.log('Cliente não encontrado');
-            res.redirect('/clientes');
+            res.redirect('/customers');
             return;
         }
 

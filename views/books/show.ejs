@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>show book</title>
+</head>
+
+<body>
+    <h1>View book</h1>
+
+    <p>Name: <%= book[0].title %>
+    </p>
+    <p>Pages: <%= book[0].page %>
+    </p>
+    <p>Copys: <%= book[0].quantity %>
+    </p>
+    <p>Author ID: <%= book[0].author_id %>
+    </p>
+    <p>Bookshelve ID: <%= book[0].bookshelve_id %>
+    </p>
+
+    <a href="/books/<%= book[0].id %>/edit">edit</a>
+
+    <form action="/books/<%= book[0].id %>?_method=DELETE" method="POST">
+        <button>delete</button>
+    </form>
+
+    <a href="/books">return</a>
+</body>
+
+</html>
