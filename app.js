@@ -1,24 +1,30 @@
 const express = require('express');
-const customerRoutes = require('./routes/customerRoutes')
+const customersRoutes = require('./routes/customersRoutes')
+const authorsRoutes = require('./routes/authorsRoutes')
+const bookshelvesRoutes = require('./routes/bookshelvesRoutes')
+const publishersRoutes = require('./routes/publishersRoutes')
 const path = require('path')
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 
 const app = express();
 
+app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(methodOverride('_method'));
-
 app.set('view engine','ejs')
 app.set('views',path.join(__dirname, '/views'))
 
+// rotas:
 
 app.get('/', (req, res) => {
-    res.send('home');
+    res.render('index');
 });
 
-app.use('/customers', customerRoutes);
+app.use('/customers', customersRoutes);
+app.use('/authors', authorsRoutes);
+app.use('/bookshelves', bookshelvesRoutes);
+app.use('/publishers', publishersRoutes);
 
 
 const PORT = 3031;

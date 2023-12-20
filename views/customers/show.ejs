@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhes do Cliente</title>
+    <title>show customer</title>
 </head>
 
 <body>
@@ -16,6 +16,12 @@
     </p>
     <p>Adress: <%= customer[0].adress %>
     </p>
+
+    <a href="/customers/<%= customer[0].id %>/edit">edit</a>
+
+    <form action="/customers/<%= customer[0].id %>?_method=DELETE" method="POST">
+        <button>delete</button>
+    </form>
 
     <a href="/customers">return</a>
 

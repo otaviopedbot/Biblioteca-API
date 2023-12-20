@@ -52,22 +52,6 @@ module.exports.renderNewForm = (req, res) => {
 
 // metodos:
 
-module.exports.editCustomer = async (req, res) => {
-
-    const customerId = req.params;
-    const customer = req.body + customerId
-
-    customer.update((err, updatedCustomer) => {
-        if (err) {
-            console.error('Erro ao atualizar cliente:', err);
-        } else {
-            console.log('Cliente atualizado com sucesso:', updatedCustomer);
-
-            res.redirect(`/customers/${customerId}`);
-        }
-    });
-
-}
 
 module.exports.createCustomer = async (req, res) => {
 
@@ -84,5 +68,36 @@ module.exports.createCustomer = async (req, res) => {
     });
 };
 
-module.exports.deleteCustomer = async (req, res) => {
-}
+
+module.exports.editCustomer = (req, res) => {
+    const customerId = req.params.id;
+    const { name, phone, adress } = req.body;
+
+    const updatedCustomer = new Customer({ name, phone, adress });
+    updatedCustomer.id = customerId;
+
+    updatedCustomer.update((err, result) => {
+        if (err) {
+            console.log('Erro ao atualizar cliente:', err);
+        } else {
+            console.log('Cliente atualizado com sucesso:', result);
+            res.redirect(`/customers/${customerId}`);
+        }
+    });
+};
+
+
+module.exports.deleteCustomer = (req, res) => {
+    const customerId = req.params.id
+
+    Customer.deleteById(customerId, (err) => {
+        if (err) {
+            console.log('Erro ao excluir cliente:', err);
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        } else {
+            console.log('Cliente excluído com sucesso.');
+            res.redirect('/customers');
+        }
+    });
+
+};

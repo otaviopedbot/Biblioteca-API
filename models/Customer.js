@@ -10,14 +10,7 @@ class Customer {
     }
 
     static getAll(callback) {
-        db.query('SELECT * FROM customers', (err, results) => {
-            if (err) {
-                console.error('Erro ao executar a consulta:', err);
-                callback(err, null);
-            } else {
-                callback(null, results);
-            }
-        });
+        db.query('SELECT * FROM customers', callback);
     }
 
     static getById(id, callback) {
@@ -41,8 +34,8 @@ class Customer {
         });
     }
 
-    delete(callback) {
-        db.query('DELETE FROM customers WHERE id = ?', [this.id], (err) => {
+    static deleteById(id, callback) {
+        db.query('DELETE FROM customers WHERE id = ?', [id], (err) => {
             callback(err, this);
         });
     }

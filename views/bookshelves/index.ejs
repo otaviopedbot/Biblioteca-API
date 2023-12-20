@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookshelves</title>
+</head>
+
+<body>
+  <h1>Bookshelves</h1>
+  <h2><a href="/bookshelves/new">New bookshelve</a></h2>
+  <ul>
+    <% for(let bookshelve of bookshelves) { %>
+      <a href="/bookshelves/<%= bookshelve.id %>">
+      <li>
+        ID: <%= bookshelve.id %>, 
+        Name: <%= bookshelve.name %>, 
+      </li>
+      </a>
+    <% }; %>
+    <a href="/">return</a>
+  </ul>
+</body>
+
+</html>

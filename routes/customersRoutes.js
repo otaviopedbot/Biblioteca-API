@@ -9,12 +9,10 @@ router.route('/')
 router.get('/new', CustomerController.renderNewForm);
 
 router.route('/:id')
-    .delete(CustomerController.deleteCustomer)
     .put(CustomerController.editCustomer)
     .get(CustomerController.showCustomer)
+    .delete(CustomerController.deleteCustomer)
 
 router.get('/:id/edit',(CustomerController.renderEditForm))
-
-
 
 module.exports = router;

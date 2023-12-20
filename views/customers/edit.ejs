@@ -8,7 +8,7 @@
 </head>
 <body>
   <h1>Edit Customer</h1>
-  <form action="/customers/<%= customer[0].id %>/?_method=PUT" method="POST">
+  <form action="/customers/<%= customer[0].id %>?_method=PUT" method="POST">
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" value="<%= customer[0].name %>" required>
     <br>

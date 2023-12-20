@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>show bookshelve</title>
+</head>
+
+<body>
+    <h1>View bookshelve</h1>
+
+    <p>Name: <%= bookshelve[0].name %>
+    </p>
+
+    <a href="/bookshelves/<%= bookshelve[0].id %>/edit">edit</a>
+
+    <form action="/bookshelves/<%= bookshelve[0].id %>?_method=DELETE" method="POST">
+        <button>delete</button>
+    </form>
+
+    <a href="/bookshelves">return</a>
+</body>
+
+</html>
