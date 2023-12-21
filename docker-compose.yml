@@ -1,0 +1,36 @@
+version: "3.3"
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - mysql-db:/var/lib/mysql
+    networks:
+      - rede_node_express
+
+  dockernode:
+    build: .
+    command: npm start
+    ports: 
+      - "3031:3031"
+    volumes:
+      - .:/usr/app
+    networks:
+      - rede_node_express
+
+volumes:
+  mysql-db:
+
+networks:
+  rede_node_express:
+    driver: bridge
