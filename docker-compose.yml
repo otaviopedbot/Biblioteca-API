@@ -2,6 +2,7 @@ version: "3.3"
 
 services:
   db:
+    container_name: mysql_libr
     image: mysql:5.7
     restart: always
     environment:
@@ -19,14 +20,17 @@ services:
       - rede_node_express
 
   dockernode:
+    container_name: node
     build: .
     command: npm start
     ports: 
-      - "3031:3031"
+      - "3000:3000"
     volumes:
       - .:/usr/app
     networks:
       - rede_node_express
+    depends_on:
+      - db
 
 volumes:
   mysql-db:

@@ -86,7 +86,6 @@ module.exports.editBooks = (req, res) => {
     });
 };
 
-
 module.exports.deleteBooks = (req, res) => {
     const BooksId = req.params.id
 
@@ -100,4 +99,4 @@ module.exports.deleteBooks = (req, res) => {
         }
     });
 
-};
+}

@@ -1,6 +1,4 @@
 const db = require('../database/db');
-const Author = require('./Author');
-const Bookshelve = require('./Bookshelve')
 
 
 class Book {
@@ -24,31 +22,32 @@ class Book {
     save(callback) {
 
         const authorId = this.author_id;
-
-        Author.getById(authorId, (err, author) => {
-            if (err) {
-                console.log('Erro ao obter autor por ID');
-            }
-        })
-
         const bookshelveId = this.bookshelve_id;
 
-        Bookshelve.getById(bookshelveId, (err, bookshelve) => {
-            if (err) {
-                console.log('Erro ao obter estante por ID:', err);
+        db.query('SELECT * FROM authors WHERE id = ?', [authorId], (err, authorRows) => {
+            if (err || authorRows.length === 0) {
+                console.log('Erro ao obter autor por ID');
+                return callback('Autor não encontrado', null);
             }
-        })
 
-        db.query('INSERT INTO books (title, page, quantity, author_id, bookshelve_id) VALUES (?, ?, ?, ?, ?)', [this.title, this.page, this.quantity, this.author_id, this.bookshelve_id], (err, result) => {
-            if (err) {
-                console.log('Erro ao inserir dados na tabela books:', err);
-                callback(err, null);
-            } else {
-                this.id = result.insertId;
-                callback(null, this);
-            }
+            db.query('SELECT * FROM bookshelves WHERE id = ?', [bookshelveId], (err, bookshelveRows) => {
+                if (err || bookshelveRows.length === 0) {
+                    console.log('Erro ao obter estante por ID');
+                    return callback('Estante não encontrada', null);
+                }
+
+                db.query('INSERT INTO books (title, page, quantity, author_id, bookshelve_id) VALUES (?, ?, ?, ?, ?)',
+                    [this.title, this.page, this.quantity, this.author_id, this.bookshelve_id], (err, result) => {
+                        if (err) {
+                            console.log('Erro ao inserir dados na tabela books:', err);
+                            callback(err, null);
+                        } else {
+                            this.id = result.insertId;
+                            callback(null, this);
+                        }
+                    });
+            });
         });
-
     }
 
 
