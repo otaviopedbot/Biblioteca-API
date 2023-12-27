@@ -56,10 +56,9 @@ module.exports.renderNewForm = (req, res) => {
 module.exports.createBooks = (req, res) => {
     const newBook = new Book(req.body);
 
-    // Salvar o livro (incluindo validações)
     newBook.save((err, savedBook) => {
         if (err) {
-            console.error('Erro ao criar livro:', err.message);  // Exibindo a mensagem de erro da model
+            console.error('Erro ao criar livro:', err.message);
         } else {
             console.log('Livro criado com sucesso:', savedBook);
             res.redirect('/books');
