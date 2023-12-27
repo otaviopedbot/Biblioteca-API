@@ -1,10 +1,12 @@
+require('dotenv').config()
+
 const express = require('express');
 
-const customersRoutes = require('./routes/customersRoutes')
-const authorsRoutes = require('./routes/authorsRoutes')
-const bookshelvesRoutes = require('./routes/bookshelvesRoutes')
-const booksRoutes = require('./routes/booksRoutes')
-const rentsRoutes = require('./routes/rentsRoutes')
+const customersRoutes = require('./routes/customers')
+const authorsRoutes = require('./routes/authors')
+const bookshelvesRoutes = require('./routes/bookshelves')
+const booksRoutes = require('./routes/books')
+const rentsRoutes = require('./routes/rents')
 
 const path = require('path')
 const bodyParser = require('body-parser');
@@ -31,7 +33,7 @@ app.use('/books', booksRoutes);
 app.use('/rents', rentsRoutes);
 
 
-const PORT = 3000;
+const PORT = process.env.APPPORT;
 app.listen(PORT, () => {
     console.log(`Rodando na porta ${PORT}`);
 });
