@@ -2,14 +2,15 @@ const DefaultModel = require('../classes/DefaultModel')
 const db = require('../database/db');
 
 class Author extends DefaultModel {
-    constructor({ db, name }) {
-        super({ modelName: 'authors' });
-        this.db = db
+    constructor({ name }) {
+        super();
         this.name = name;
     }
 
+    static modelName = 'authors';
+
     save(callback) {
-        this.db.query('INSERT INTO authors (name) VALUES (?)', [this.name], (err, results) => {
+        db.query('INSERT INTO authors (name) VALUES (?)', [this.name], (err, results) => {
             if (err) {
                 callback(err, null);
             } else {
@@ -20,7 +21,7 @@ class Author extends DefaultModel {
     }
 
     update(callback) {
-        this.db.query('UPDATE authors SET name = ? WHERE id = ?', [this.name, this.id], (err) => {
+        db.query('UPDATE authors SET name = ? WHERE id = ?', [this.name, this.id], (err) => {
             callback(err, this);
         });
     }

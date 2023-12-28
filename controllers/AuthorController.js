@@ -17,13 +17,11 @@ module.exports.showAuthor = (req, res) => {
 
     Author.getById(authorId, (err, author) => {
         if (err) {
-            console.log('Erro ao obter autor por ID:', err);
-        } else {
-            res.render('authors/show', { author });
+            throw new Error ('Erro ao obter autor por ID: ',err );
         }
+        res.render('authors/show', { author });
     });
 };
-
 
 module.exports.renderEditForm = (req, res) => {
     const authorId = req.params.id;
@@ -44,7 +42,6 @@ module.exports.renderEditForm = (req, res) => {
     });
 };
 
-
 module.exports.renderNewForm = (req, res) => {
     res.render('authors/new')
 }
@@ -59,7 +56,7 @@ module.exports.createAuthor = async (req, res) => {
 
     newAuthor.save((err, savedAuthor) => {
         if (err) {
-            console.error('Erro ao criar autor:', err);
+            throw new Error ('Erro ao criar autor:', err);
         } else {
             console.log('Autor criado com sucesso:', savedAuthor);
 
@@ -67,7 +64,6 @@ module.exports.createAuthor = async (req, res) => {
         }
     });
 };
-
 
 module.exports.editAuthor = (req, res) => {
     const authorId = req.params.id;
@@ -85,7 +81,6 @@ module.exports.editAuthor = (req, res) => {
         }
     });
 };
-
 
 module.exports.deleteAuthor = (req, res) => {
     const authorId = req.params.id

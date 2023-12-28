@@ -1,19 +1,15 @@
+const DefaultModel = require('../classes/DefaultModel')
 const db = require('../database/db');
 
 
-class Bookshelve {
+class Bookshelve extends DefaultModel{
 
     constructor({ name }) {
+        super();
         this.name = name;
     }
 
-    static getAll(callback) {
-        db.query('SELECT * FROM bookshelves', callback);
-    }
-
-    static getById(id, callback) {
-        db.query('SELECT * FROM bookshelves WHERE id = ?', [id], callback);
-    }
+    static modelName = 'bookshelves';
 
     save(callback) {
         db.query('INSERT INTO bookshelves (name) VALUES (?)', [this.name], (err, results) => {
@@ -32,11 +28,6 @@ class Bookshelve {
         });
     }
 
-    static deleteById(id, callback) {
-        db.query('DELETE FROM bookshelves WHERE id = ?', [id], (err) => {
-            callback(err, this);
-        });
-    }
 }
 
 module.exports = Bookshelve;

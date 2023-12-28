@@ -58,15 +58,13 @@ module.exports.createBooks = (req, res) => {
 
     newBook.save((err, savedBook) => {
         if (err) {
-            console.error('Erro ao criar livro:', err.message);
+           console.log('Erro ao criar livro:', err.message);
         } else {
             console.log('Livro criado com sucesso:', savedBook);
             res.redirect('/books');
         }
     });
 };
-
-
 
 module.exports.editBooks = (req, res) => {
     const BooksId = req.params.id;
