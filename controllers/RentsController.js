@@ -18,7 +18,7 @@ module.exports.showRent = (req, res) => {
 
     Rent.getById(rentsId, (err, rent) => {
         if (err) {
-            console.log('Erro ao obter emprestimo por ID:', err);
+            throw new Error('Erro ao obter emprestimo por ID:', err);
         } else {
             res.render('rents/show', { rent });
         }
@@ -30,12 +30,12 @@ module.exports.renderEditForm = (req, res) => {
 
     Rent.getById(rentsId, (err, rent) => {
         if (err) {
-            console.log('Erro ao obter emprestimo por ID:', err);
+            throw new Error('Erro ao obter emprestimo por ID:', err);
             return;
         }
 
         if (!rent) {
-            console.log('emprestimo não encontrado');
+            throw new Error('emprestimo não encontrado');
             res.redirect('/rents');
             return;
         }
@@ -57,7 +57,7 @@ module.exports.createRent = (req, res) => {
 
     newrent.save((err, savedRent) => {
         if (err) {
-            console.error('Erro ao criar emprestimo:', err.message);
+            throw new Error('Erro ao criar emprestimo:', err.message);
         } else {
             console.log('emprestimo criado com sucesso:', savedRent);
             res.redirect('/rents');
@@ -75,7 +75,7 @@ module.exports.editRent = (req, res) => {
 
     updatedrents.update((err, result) => {
         if (err) {
-            console.log('Erro ao atualizar emprestimo:', err);
+            throw new Error('Erro ao atualizar emprestimo:', err);
         } else {
             console.log('emprestimo atualizado com sucesso:', result);
             res.redirect(`/rents/${rentsId}`);
@@ -89,7 +89,7 @@ module.exports.deleteRent = (req, res) => {
 
     Rent.deleteById(rentsId, (err) => {
         if (err) {
-            console.log('Erro ao excluir emprestimo:', err);
+            throw new Error('Erro ao excluir emprestimo:', err);
             res.status(500).json({ error: 'Erro interno do servidor' });
         } else {
             console.log('emprestimo excluído com sucesso.');

@@ -17,7 +17,7 @@ module.exports.showBookshelve = (req, res) => {
 
     Bookshelve.getById(bookshelveId, (err, bookshelve) => {
         if (err) {
-            console.log('Erro ao obter estante por ID:', err);
+            throw new Error('Erro ao obter estante por ID:', err);
         } else {
             res.render('bookshelves/show', { bookshelve });
         }
@@ -30,12 +30,12 @@ module.exports.renderEditForm = (req, res) => {
 
     Bookshelve.getById(bookshelveId, (err, bookshelve) => {
         if (err) {
-            console.log('Erro ao obter estante por ID:', err);
+            throw new Error('Erro ao obter estante por ID:', err);
             return;
         }
 
         if (!bookshelve) {
-            console.log('Estante não encontrada');
+            throw new Error('Estante não encontrada');
             res.redirect('/bookshelves');
             return;
         }
@@ -78,7 +78,7 @@ module.exports.editBookshelve = (req, res) => {
 
     updatedBookshelve.update((err, result) => {
         if (err) {
-            console.log('Erro ao atualizar estante:', err);
+            throw new Error('Erro ao atualizar estante:', err);
         } else {
             console.log('Estante atualizada com sucesso:', result);
             res.redirect(`/bookshelves/${bookshelveId}`);
@@ -92,7 +92,7 @@ module.exports.deleteBookshelve = (req, res) => {
 
     Bookshelve.deleteById(bookshelveId, (err) => {
         if (err) {
-            console.log('Erro ao excluir autor:', err);
+            throw new Error('Erro ao excluir autor:', err);
             res.status(500).json({ error: 'Erro interno do servidor' });
         } else {
             console.log('estante excluída com sucesso.');

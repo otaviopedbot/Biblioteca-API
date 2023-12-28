@@ -17,7 +17,7 @@ module.exports.showBooks = (req, res) => {
 
     Book.getById(BooksId, (err, book) => {
         if (err) {
-            console.log('Erro ao obter livro por ID:', err);
+            throw new Error('Erro ao obter livro por ID:', err);
         } else {
             res.render('books/show', { book });
         }
@@ -30,12 +30,12 @@ module.exports.renderEditForm = (req, res) => {
 
     Book.getById(BooksId, (err, book) => {
         if (err) {
-            console.log('Erro ao obter livro por ID:', err);
+            throw new Error('Erro ao obter livro por ID:', err);
             return;
         }
 
         if (!book) {
-            console.log('livro não encontrado');
+            throw new Error('livro não encontrado');
             res.redirect('/books');
             return;
         }
@@ -58,7 +58,7 @@ module.exports.createBooks = (req, res) => {
 
     newBook.save((err, savedBook) => {
         if (err) {
-           console.log('Erro ao criar livro:', err.message);
+            throw new Error('Erro ao criar livro:', err.message);
         } else {
             console.log('Livro criado com sucesso:', savedBook);
             res.redirect('/books');
@@ -75,7 +75,7 @@ module.exports.editBooks = (req, res) => {
 
     updatedBooks.update((err, result) => {
         if (err) {
-            console.log('Erro ao atualizar livro:', err);
+            throw new Error('Erro ao atualizar livro:', err);
         } else {
             console.log('livro atualizado com sucesso:', result);
             res.redirect(`/books/${BooksId}`);
@@ -88,7 +88,7 @@ module.exports.deleteBooks = (req, res) => {
 
     Book.deleteById(BooksId, (err) => {
         if (err) {
-            console.log('Erro ao excluir livro:', err);
+            throw new Error('Erro ao excluir livro:', err);
             res.status(500).json({ error: 'Erro interno do servidor' });
         } else {
             console.log('livro excluído com sucesso.');

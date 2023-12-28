@@ -17,7 +17,7 @@ module.exports.showCustomer = (req, res) => {
 
     Customer.getById(customerId, (err, customer) => {
         if (err) {
-            console.log('Erro ao obter cliente por ID:', err);
+            throw new Error('Erro ao obter cliente por ID:', err);
         } else {
             res.render('customers/show', { customer });
         }
@@ -30,12 +30,12 @@ module.exports.renderEditForm = (req, res) => {
 
     Customer.getById(customerId, (err, customer) => {
         if (err) {
-            console.log('Erro ao obter cliente por ID:', err);
+            throw new Error('Erro ao obter cliente por ID:', err);
             return;
         }
 
         if (!customer) {
-            console.log('Cliente não encontrado');
+            throw new Error('Cliente não encontrado');
             res.redirect('/customers');
             return;
         }
@@ -78,7 +78,7 @@ module.exports.editCustomer = (req, res) => {
 
     updatedCustomer.update((err, result) => {
         if (err) {
-            console.log('Erro ao atualizar cliente:', err);
+            throw new Error('Erro ao atualizar cliente:', err);
         } else {
             console.log('Cliente atualizado com sucesso:', result);
             res.redirect(`/customers/${customerId}`);
@@ -92,7 +92,7 @@ module.exports.deleteCustomer = (req, res) => {
 
     Customer.deleteById(customerId, (err) => {
         if (err) {
-            console.log('Erro ao excluir cliente:', err);
+            throw new Error('Erro ao excluir cliente:', err);
             res.status(500).json({ error: 'Erro interno do servidor' });
         } else {
             console.log('Cliente excluído com sucesso.');

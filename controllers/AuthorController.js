@@ -28,12 +28,12 @@ module.exports.renderEditForm = (req, res) => {
 
     Author.getById(authorId, (err, author) => {
         if (err) {
-            console.log('Erro ao obter autor por ID:', err);
+            throw new Error('Erro ao obter autor por ID:', err);
             return;
         }
 
         if (!author) {
-            console.log('Autor não encontrado');
+            throw new Error('Autor não encontrado');
             res.redirect('/authors');
             return;
         }
@@ -74,7 +74,7 @@ module.exports.editAuthor = (req, res) => {
 
     updatedAuthor.update((err, result) => {
         if (err) {
-            console.log('Erro ao atualizar autor:', err);
+            throw new Error('Erro ao atualizar autor:', err);
         } else {
             console.log('Autor atualizado com sucesso:', result);
             res.redirect(`/authors/${authorId}`);
@@ -87,7 +87,7 @@ module.exports.deleteAuthor = (req, res) => {
 
     Author.deleteById(authorId, (err) => {
         if (err) {
-            console.log('Erro ao excluir autor:', err);
+            throw new Error('Erro ao excluir autor:', err);
             res.status(500).json({ error: 'Erro interno do servidor' });
         } else {
             console.log('Autor excluído com sucesso.');
