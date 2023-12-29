@@ -13,7 +13,7 @@ class Book extends DefaultModel {
         this.bookshelve_id = bookshelve_id;
     }
 
-    static modelName = 'books';
+    static modelName = "books";
 
     save(callback) {
 
@@ -26,7 +26,6 @@ class Book extends DefaultModel {
                     callback(null, this);
                 }
             });
-
     }
 
     update(callback) {

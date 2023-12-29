@@ -6,13 +6,13 @@ router.route('/')
     .get(AuthorController.index)
     .post(AuthorController.createAuthor)
 
-router.get('/new', AuthorController.renderNewForm);
+// router.get('/new', AuthorController.renderNewForm);
 
 router.route('/:id')
     .put(AuthorController.editAuthor)
     .get(AuthorController.showAuthor)
     .delete(AuthorController.deleteAuthor)
 
-router.get('/:id/edit',(AuthorController.renderEditForm))
+// router.get('/:id/edit',(AuthorController.renderEditForm))
 
 module.exports = router;

@@ -2,7 +2,7 @@ const DefaultModel = require('../classes/DefaultModel')
 const db = require('../database/db');
 
 
-class Customer extends DefaultModel{
+class Customer extends DefaultModel {
 
     constructor({ name, phone, adress }) {
         super();

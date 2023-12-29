@@ -5,9 +5,9 @@ const Author = require('../models/Author');
 module.exports.index = (req, res) => {
     Author.getAll((err, authors) => {
         if (err) {
-            console.error('Erro ao obter autores:', err);
+            res.status(500).json({ error: 'Erro interno ao obter autores', message: err.message });
         } else {
-            res.render('authors/index', { authors });
+            res.json(authors);
         }
     });
 };
@@ -17,34 +17,38 @@ module.exports.showAuthor = (req, res) => {
 
     Author.getById(authorId, (err, author) => {
         if (err) {
-            throw new Error ('Erro ao obter autor por ID: ',err );
+            res.status(500).json({ error: 'Erro interno ao obter autor por ID', message: err.message });
+        } else {
+            if (author && author.length > 0) {
+                res.json(author);
+            } else {
+                res.status(404).json({ error: 'Autor não encontrado' });
+            }
         }
-        res.render('authors/show', { author });
     });
 };
 
-module.exports.renderEditForm = (req, res) => {
-    const authorId = req.params.id;
 
-    Author.getById(authorId, (err, author) => {
-        if (err) {
-            throw new Error('Erro ao obter autor por ID:', err);
-            return;
-        }
+// module.exports.renderEditForm = (req, res) => {
+//     const authorId = req.params.id;
 
-        if (!author) {
-            throw new Error('Autor não encontrado');
-            res.redirect('/authors');
-            return;
-        }
+//     Author.getById(authorId, (err, author) => {
 
-        res.render('authors/edit', { author });
-    });
-};
+//         if (err) {
+//             throw new Error('Erro ao obter autor por ID: ', err);
+//         } else {
+//             if (author && author.length > 0) {
+//                 res.render('authors/edit', { author });
+//             } else {
+//                 throw new Error('autor não encontrado: ', err);
+//             }
+//         }
+//     });
+// };
 
-module.exports.renderNewForm = (req, res) => {
-    res.render('authors/new')
-}
+// module.exports.renderNewForm = (req, res) => {
+//     res.render('authors/new')
+// }
 
 
 // metodos:
@@ -52,17 +56,19 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.createAuthor = async (req, res) => {
 
-    const newAuthor = new Author(req.body);
+    try{
+        const newAuthor = new Author(req.body);
 
-    newAuthor.save((err, savedAuthor) => {
-        if (err) {
-            throw new Error ('Erro ao criar autor:', err);
-        } else {
-            console.log('Autor criado com sucesso:', savedAuthor);
+        newAuthor.save((err, savedAuthor) => {
+            if (err) {
+                throw new Error('Erro ao criar autor:', err);
+            }
+            res.json({ message: 'Autor criado com sucesso:', savedAuthor });
+        });
+    } catch (err){
+        throw new Error('Erro ao criar autor:', err);
+    }
 
-            res.redirect('/authors');
-        }
-    });
 };
 
 module.exports.editAuthor = (req, res) => {
@@ -75,10 +81,9 @@ module.exports.editAuthor = (req, res) => {
     updatedAuthor.update((err, result) => {
         if (err) {
             throw new Error('Erro ao atualizar autor:', err);
-        } else {
-            console.log('Autor atualizado com sucesso:', result);
-            res.redirect(`/authors/${authorId}`);
         }
+        res.json({ message: 'Autor atualizado com sucesso:', result });
+
     });
 };
 
@@ -88,11 +93,9 @@ module.exports.deleteAuthor = (req, res) => {
     Author.deleteById(authorId, (err) => {
         if (err) {
             throw new Error('Erro ao excluir autor:', err);
-            res.status(500).json({ error: 'Erro interno do servidor' });
-        } else {
-            console.log('Autor excluído com sucesso.');
-            res.redirect('/authors');
         }
+        res.json({ message: 'Autor excluido com sucesso' });
+
     });
 
 };

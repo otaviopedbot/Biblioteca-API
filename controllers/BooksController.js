@@ -12,14 +12,19 @@ module.exports.index = (req, res) => {
     });
 };
 
+
 module.exports.showBooks = (req, res) => {
     const BooksId = req.params.id;
 
     Book.getById(BooksId, (err, book) => {
         if (err) {
-            throw new Error('Erro ao obter livro por ID:', err);
+            throw new Error('Erro ao obter livro por ID: ', err);
         } else {
-            res.render('books/show', { book });
+            if (book && book.length > 0) {
+                res.render('books/show', { book });
+            } else {
+                throw new Error('livro não encontrado: ', err);
+            }
         }
     });
 };
@@ -30,17 +35,14 @@ module.exports.renderEditForm = (req, res) => {
 
     Book.getById(BooksId, (err, book) => {
         if (err) {
-            throw new Error('Erro ao obter livro por ID:', err);
-            return;
+            throw new Error('Erro ao obter livro por ID: ', err);
+        } else {
+            if (book && book.length > 0) {
+                res.render('books/edit', { book });
+            } else {
+                throw new Error('livro não encontrado: ', err);
+            }
         }
-
-        if (!book) {
-            throw new Error('livro não encontrado');
-            res.redirect('/books');
-            return;
-        }
-
-        res.render('books/edit', { book });
     });
 };
 

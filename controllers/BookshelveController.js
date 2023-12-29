@@ -17,9 +17,13 @@ module.exports.showBookshelve = (req, res) => {
 
     Bookshelve.getById(bookshelveId, (err, bookshelve) => {
         if (err) {
-            throw new Error('Erro ao obter estante por ID:', err);
+            throw new Error('Erro ao obter estante por ID: ', err);
         } else {
-            res.render('bookshelves/show', { bookshelve });
+            if (bookshelve && bookshelve.length > 0) {
+                res.render('bookshelves/show', { bookshelve });
+            } else {
+                throw new Error('estante não encontrado: ', err);
+            }
         }
     });
 };
@@ -41,6 +45,18 @@ module.exports.renderEditForm = (req, res) => {
         }
 
         res.render('bookshelves/edit', { bookshelve });
+
+
+
+
+
+
+
+
+
+        
+
+
     });
 };
 

@@ -1,7 +1,7 @@
 const db = require('../database/db');
 
 class DefaultModel {
-    
+
     static modelName = '';
 
     static getAll(callback) {
@@ -9,7 +9,13 @@ class DefaultModel {
     }
 
     static getById(id, callback) {
-        db.query(`SELECT * FROM ${this.modelName} WHERE id = ?`, [id], callback);
+        db.query(`SELECT * FROM ${this.modelName} WHERE id = ?`, [id], (err, result) => {
+            if (err) {
+                callback(err);
+            } else {
+                callback(null, result);
+            }
+        });
     }
 
     static deleteById(id, callback) {

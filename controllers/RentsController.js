@@ -65,7 +65,6 @@ module.exports.createRent = (req, res) => {
     });
 };
 
-
 module.exports.editRent = (req, res) => {
     const rentsId = req.params.id;
     const { date, customer_id, book_id } = req.body;
@@ -82,7 +81,6 @@ module.exports.editRent = (req, res) => {
         }
     });
 };
-
 
 module.exports.deleteRent = (req, res) => {
     const rentsId = req.params.id
