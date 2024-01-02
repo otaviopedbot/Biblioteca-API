@@ -4,23 +4,39 @@ class DefaultModel {
 
     static modelName = '';
 
-    static getAll(callback) {
-        db.query(`SELECT * FROM ${this.modelName}`, callback);
-    }
-
-    static getById(id, callback) {
-        db.query(`SELECT * FROM ${this.modelName} WHERE id = ?`, [id], (err, result) => {
-            if (err) {
-                callback(err);
-            } else {
-                callback(null, result);
-            }
+    static getAll() {
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT * FROM ${this.modelName}`, (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results);
+                }
+            });
         });
     }
 
-    static deleteById(id, callback) {
-        db.query(`DELETE FROM ${this.modelName} WHERE id = ?`, [id], (err) => {
-            callback(err, this);
+    static getById(id) {
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT * FROM ${this.modelName} WHERE id = ?`, [id], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    }
+
+    static deleteById(id) {
+        return new Promise((resolve, reject) => {
+            db.query(`DELETE FROM ${this.modelName} WHERE id = ?`, [id], (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
         });
     }
 }
