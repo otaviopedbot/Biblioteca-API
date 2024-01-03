@@ -11,7 +11,7 @@ module.exports.index = (req, res) => {
             res.json(results);
         })
         .catch(error => {
-            res.json({ 'message': 'Erro interno ao obter livros', error: err });
+            res.json({ 'message': 'Erro interno ao obter livros', error: error });
         });
 
 };
@@ -36,9 +36,16 @@ module.exports.showBook = (req, res) => {
 // operações:
 
 module.exports.createBook = async (req, res, next) => {
-    const newBook = new Book(req.body);
+    const { title, page, quantity, author_id, bookshelve_id } = req.body;
 
     try {
+
+        if (!title || !page || !quantity || !author_id || !bookshelve_id) {
+            next(new Error('Dados não informados ao criar livro'));
+        }
+
+        const newBook = new Book({title, page, quantity, author_id, bookshelve_id});
+
         const savedBook = await newBook.save();
         res.json({ message: 'Livro criado com sucesso', savedBook });
     } catch (error) {
@@ -56,6 +63,10 @@ module.exports.editBook = async (req, res, next) => {
 
         if (!existingBook || existingBook.length === 0) {
             return res.status(404).json({ error: 'Livro não encontrado' });
+        }
+
+        if (!title || !page || !quantity || !author_id || !bookshelve_id) {
+            next(new Error('Dados não informados ao atualizar livro'));
         }
 
         const existingAuthor = await Author.getById(author_id);

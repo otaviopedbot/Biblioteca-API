@@ -9,7 +9,7 @@ module.exports.index = (req, res) => {
             res.json(results);
         })
         .catch(error => {
-            res.json({ 'message': 'Erro interno ao obter autores', error: err });
+            res.json({ 'message': 'Erro interno ao obter autores', error: error });
         });
 
 };
@@ -34,9 +34,15 @@ module.exports.showAuthor = (req, res) => {
 //operações
 
 module.exports.createAuthor = async (req, res, next) => {
-    const newAuthor = new Author(req.body);
+    const { name } = req.body
 
     try {
+        if (!name) {
+            next(new Error('Nome não informado ao criar autor'));
+        }
+
+        const newAuthor = new Author({name});
+
         const savedAuthor = await newAuthor.save();
         res.json({ message: 'Autor criado com sucesso', savedAuthor });
     } catch (error) {
@@ -53,6 +59,10 @@ module.exports.editAuthor = async (req, res, next) => {
 
         if (!existingAuthor || existingAuthor.length === 0) {
             return res.status(404).json({ error: 'Autor não encontrado' });
+        }
+
+        if (!name) {
+            next(new Error('Nome não informado ao editar autor'));
         }
 
         const updatedAuthor = new Author({ name });

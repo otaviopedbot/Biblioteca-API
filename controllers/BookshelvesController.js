@@ -9,7 +9,7 @@ module.exports.index = (req, res) => {
             res.json(results);
         })
         .catch(error => {
-            res.json({ 'message': 'Erro interno ao obter Estantes', error: err });
+            res.json({ 'message': 'Erro interno ao obter Estantes', error: error });
         });
 
 };
@@ -34,9 +34,16 @@ module.exports.showBookshelve = (req, res) => {
 // metodos:
 
 module.exports.createBookshelve = async (req, res, next) => {
-    const newBookshelve = new Bookshelve(req.body);
+    const {name} = req.body    
 
     try {
+
+        if (!name) {
+            next(new Error('Dados não informados ao criar estante'))
+        }
+
+        const newBookshelve = new Bookshelve({name});
+
         const savedBookshelve = await newBookshelve.save();
         res.json({ message: 'Estante criada com sucesso', savedBookshelve });
     } catch (error) {
@@ -49,10 +56,15 @@ module.exports.editBookshelve = async (req, res, next) => {
     const { name } = req.body;
 
     try {
+
         const existingBookshelve = await Bookshelve.getById(bookshelveId);
 
         if (!existingBookshelve || existingBookshelve.length === 0) {
             return res.status(404).json({ error: 'Estante não encontrada' });
+        }
+
+        if (!name) {
+            next(new Error('Dados não informados ao criar estante'))
         }
 
         const updatedBookshelve = new Bookshelve({ name });

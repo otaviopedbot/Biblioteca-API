@@ -11,7 +11,7 @@ module.exports.index = (req, res) => {
             res.json(results);
         })
         .catch(error => {
-            res.json({ 'message': 'Erro interno ao obter emprestimos', error: err });
+            res.json({ 'message': 'Erro interno ao obter emprestimos', error: error });
         });
 
 };
@@ -36,9 +36,28 @@ module.exports.showRent = (req, res) => {
 // metodos:
 
 module.exports.createRent = async (req, res, next) => {
-    const newrent = new Rent(req.body);
+    const { date, customer_id, book_id } = req.body;
 
     try {
+
+        if (!date, !customer_id, !book_id) {
+            next(new Error('Dados não informados ao criar emprestimo'))
+        }
+
+        const existingCustomer = await Customer.getById(customer_id);
+
+        if (!existingCustomer || existingCustomer.length === 0) {
+            return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+
+        const existingBook = await Book.getById(book_id);
+
+        if (!existingBook || existingBook.length === 0) {
+            return res.status(404).json({ error: 'Livro não encontrado' });
+        }
+
+        const newrent = new Rent({date, customer_id, book_id});
+
         const savedRent = await newrent.save();
         res.json({ message: 'Emprestimo criado com sucesso', savedRent });
     } catch (error) {
@@ -56,6 +75,10 @@ module.exports.editRent = async (req, res, next) => {
 
         if (!existingRent || existingRent.length === 0) {
             return res.status(404).json({ error: 'Emprestimo não encontrado' });
+        }
+
+        if (!date, !customer_id, !book_id) {
+            next(new Error('Dados não informados ao atualizar emprestimo'))
         }
 
         const existingCustomer = await Customer.getById(customer_id);

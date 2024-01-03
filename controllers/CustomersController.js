@@ -9,7 +9,7 @@ module.exports.index = (req, res) => {
             res.json(results);
         })
         .catch(error => {
-            res.json({ 'message': 'Erro interno ao obter clientes', error: err });
+            res.json({ 'message': 'Erro interno ao obter clientes', error: error });
         });
 
 };
@@ -34,11 +34,17 @@ module.exports.showCustomer = (req, res) => {
 // metodos:
 
 module.exports.createCustomer = async (req, res, next) => {
-    const newCustomer = new Customer(req.body);
+    const {name, phone, adress} = req.body
 
     try {
+        if (!name || !phone || !adress) {
+            next(new Error('Dados não informados ao criar cliente'))
+        }
+
+        const newCustomer = new Customer({name, phone, adress});
+
         const savedCustomer = await newCustomer.save();
-        res.json({ message: 'CLiente criado com sucesso', savedCustomer });
+        res.json({ message: 'Cliente criado com sucesso', savedCustomer });
     } catch (error) {
         next(new Error('Erro interno ao criar cliente'));
     }
@@ -53,6 +59,10 @@ module.exports.editCustomer = async (req, res, next) => {
 
         if (!existingCustomer || existingCustomer.length === 0) {
             return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+
+        if (!name || !phone || !adress) {
+            next(new Error('Dados não informados ao criar cliente'))
         }
 
         const updatedCustomer = new Customer({ name, phone, adress });
