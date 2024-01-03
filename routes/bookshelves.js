@@ -1,18 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const BookshelveController = require('../controllers/BookshelveController');
+const BookshelvesController = require('../controllers/BookshelvesController');
 
 router.route('/')
-    .get(BookshelveController.index)
-    .post(BookshelveController.createBookshelve)
-
-router.get('/new', BookshelveController.renderNewForm);
+    .get(BookshelvesController.index)
+    .post(BookshelvesController.createBookshelve)
 
 router.route('/:id')
-    .put(BookshelveController.editBookshelve)
-    .get(BookshelveController.showBookshelve)
-    .delete(BookshelveController.deleteBookshelve)
-
-router.get('/:id/edit',(BookshelveController.renderEditForm))
+    .put(BookshelvesController.editBookshelve)
+    .get(BookshelvesController.showBookshelve)
+    .delete(BookshelvesController.deleteBookshelve)
 
 module.exports = router;

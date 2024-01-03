@@ -44,7 +44,6 @@ module.exports.createAuthor = async (req, res, next) => {
     }
 };
 
-
 module.exports.editAuthor = async (req, res, next) => {
     const authorId = req.params.id;
     const { name } = req.body;
@@ -67,7 +66,6 @@ module.exports.editAuthor = async (req, res, next) => {
     }
 
 };
-
 
 module.exports.deleteAuthor = async (req, res, next) => {
     const authorId = req.params.id

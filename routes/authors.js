@@ -1,18 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const AuthorController = require('../controllers/AuthorController');
+const AuthorsController = require('../controllers/AuthorsController');
 
 router.route('/')
-    .get(AuthorController.index)
-    .post(AuthorController.createAuthor)
-
-// router.get('/new', AuthorController.renderNewForm);
+    .get(AuthorsController.index)
+    .post(AuthorsController.createAuthor)
 
 router.route('/:id')
-    .put(AuthorController.editAuthor)
-    .get(AuthorController.showAuthor)
-    .delete(AuthorController.deleteAuthor)
-
-// router.get('/:id/edit',(AuthorController.renderEditForm))
+    .put(AuthorsController.editAuthor)
+    .get(AuthorsController.showAuthor)
+    .delete(AuthorsController.deleteAuthor)
 
 module.exports = router;

@@ -1,98 +1,102 @@
 const Rent = require('../models/Rent');
-
+const Book = require('../models/Book');
+const Customer = require('../models/Customer');
 
 // visualizações:
 
 module.exports.index = (req, res) => {
-    Rent.getAll((err, rents) => {
-        if (err) {
-            console.error('Erro ao obter emprestimos:', err);
-        } else {
-            res.render('rents/index', { rents });
-        }
-    });
+
+    Rent.getAll()
+        .then(results => {
+            res.json(results);
+        })
+        .catch(error => {
+            res.json({ 'message': 'Erro interno ao obter emprestimos', error: err });
+        });
+
 };
 
 module.exports.showRent = (req, res) => {
     const rentsId = req.params.id;
 
-    Rent.getById(rentsId, (err, rent) => {
-        if (err) {
-            throw new Error('Erro ao obter emprestimo por ID:', err);
-        } else {
-            res.render('rents/show', { rent });
-        }
-    });
+    Rent.getById(rentsId)
+        .then(rent => {
+            if (rent && rent.length > 0) {
+                res.json(rent);
+            } else {
+                res.status(404).json({ message: 'Emprestimo não encontrado' });
+            }
+        })
+        .catch(error => {
+            res.status(500).json({ message: 'Erro interno ao obter emprestimo por ID', error: error });
+        });
+
 };
-
-module.exports.renderEditForm = (req, res) => {
-    const rentsId = req.params.id;
-
-    Rent.getById(rentsId, (err, rent) => {
-        if (err) {
-            throw new Error('Erro ao obter emprestimo por ID:', err);
-            return;
-        }
-
-        if (!rent) {
-            throw new Error('emprestimo não encontrado');
-            res.redirect('/rents');
-            return;
-        }
-
-        res.render('rents/edit', { rent });
-    });
-};
-
-module.exports.renderNewForm = (req, res) => {
-    res.render('rents/new')
-}
-
 
 // metodos:
 
-
-module.exports.createRent = (req, res) => {
+module.exports.createRent = async (req, res, next) => {
     const newrent = new Rent(req.body);
 
-    newrent.save((err, savedRent) => {
-        if (err) {
-            throw new Error('Erro ao criar emprestimo:', err.message);
-        } else {
-            console.log('emprestimo criado com sucesso:', savedRent);
-            res.redirect('/rents');
-        }
-    });
+    try {
+        const savedRent = await newrent.save();
+        res.json({ message: 'Emprestimo criado com sucesso', savedRent });
+    } catch (error) {
+        next(new Error('Erro interno ao criar emprestimo'));
+    }
 };
 
-module.exports.editRent = (req, res) => {
-    const rentsId = req.params.id;
+module.exports.editRent = async (req, res, next) => {
+    const rentId = req.params.id;
     const { date, customer_id, book_id } = req.body;
 
-    const updatedrents = new Rent({ date, customer_id, book_id });
-    updatedrents.id = rentsId;
+    try {
 
-    updatedrents.update((err, result) => {
-        if (err) {
-            throw new Error('Erro ao atualizar emprestimo:', err);
-        } else {
-            console.log('emprestimo atualizado com sucesso:', result);
-            res.redirect(`/rents/${rentsId}`);
+        const existingRent = await Rent.getById(rentId);
+
+        if (!existingRent || existingRent.length === 0) {
+            return res.status(404).json({ error: 'Emprestimo não encontrado' });
         }
-    });
+
+        const existingCustomer = await Customer.getById(customer_id);
+
+        if (!existingCustomer || existingCustomer.length === 0) {
+            return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+
+        const existingBook = await Book.getById(book_id);
+
+        if (!existingBook || existingBook.length === 0) {
+            return res.status(404).json({ error: 'Livro não encontrado' });
+        }
+
+        const updatedrents = new Rent({ date, customer_id, book_id });
+        updatedrents.id = rentId;
+
+        await updatedrents.update();
+
+        res.json({ message: 'Emprestimo atualizado com sucesso', updatedrents });
+    } catch (error) {
+        next(new Error('Erro interno ao editar emprestimo'));
+    }
+
 };
 
-module.exports.deleteRent = (req, res) => {
-    const rentsId = req.params.id
+module.exports.deleteRent = async (req, res, next) => {
+    const rentId = req.params.id
 
-    Rent.deleteById(rentsId, (err) => {
-        if (err) {
-            throw new Error('Erro ao excluir emprestimo:', err);
-            res.status(500).json({ error: 'Erro interno do servidor' });
-        } else {
-            console.log('emprestimo excluído com sucesso.');
-            res.redirect('/rents');
+    try {
+        const existingRent = await Rent.getById(rentId);
+
+        if (!existingRent || existingRent.length === 0) {
+            return res.status(404).json({ error: 'Autor não encontrado' });
         }
-    });
+
+        Rent.deleteById(rentId)
+
+        res.json({ message: 'Emprestimo excluido com sucesso' });
+    } catch (error) {
+        next(new Error('Erro interno ao excluir emprestimo'));
+    }
 
 };

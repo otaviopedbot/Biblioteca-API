@@ -4,15 +4,11 @@ const BooksController = require('../controllers/BooksController');
 
 router.route('/')
     .get(BooksController.index)
-    .post(BooksController.createBooks)
-
-router.get('/new', BooksController.renderNewForm);
+    .post(BooksController.createBook)
 
 router.route('/:id')
-    .put(BooksController.editBooks)
-    .get(BooksController.showBooks)
-    .delete(BooksController.deleteBooks)
-
-router.get('/:id/edit',(BooksController.renderEditForm))
+    .put(BooksController.editBook)
+    .get(BooksController.showBook)
+    .delete(BooksController.deleteBook)
 
 module.exports = router;

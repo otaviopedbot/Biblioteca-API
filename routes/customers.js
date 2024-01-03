@@ -1,18 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const CustomerController = require('../controllers/CustomerController');
+const CustomersController = require('../controllers/CustomersController');
 
 router.route('/')
-    .get(CustomerController.index)
-    .post(CustomerController.createCustomer)
-
-router.get('/new', CustomerController.renderNewForm);
+    .get(CustomersController.index)
+    .post(CustomersController.createCustomer)
 
 router.route('/:id')
-    .put(CustomerController.editCustomer)
-    .get(CustomerController.showCustomer)
-    .delete(CustomerController.deleteCustomer)
-
-router.get('/:id/edit',(CustomerController.renderEditForm))
+    .put(CustomersController.editCustomer)
+    .get(CustomersController.showCustomer)
+    .delete(CustomersController.deleteCustomer)
 
 module.exports = router;

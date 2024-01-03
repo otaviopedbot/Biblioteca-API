@@ -13,24 +13,31 @@ class Book extends DefaultModel {
         this.bookshelve_id = bookshelve_id;
     }
 
-    static modelName = "books";
+    static modelName = 'books';
 
-    save(callback) {
-
-        db.query('INSERT INTO books (title, page, quantity, author_id, bookshelve_id) VALUES (?, ?, ?, ?, ?)',
+    save() {
+        return new Promise((resolve, reject) => {
+            db.query('INSERT INTO books (title, page, quantity, author_id, bookshelve_id) VALUES (?, ?, ?, ?, ?)',
             [this.title, this.page, this.quantity, this.author_id, this.bookshelve_id], (err, result) => {
                 if (err) {
-                    callback(err, null);
+                    reject(err);
                 } else {
                     this.id = result.insertId;
-                    callback(null, this);
+                    resolve(this);
                 }
             });
+        });
     }
 
-    update(callback) {
-        db.query('UPDATE books SET title = ?, page = ?, quantity = ?, author_id = ?, bookshelve_id = ?  WHERE id = ?', [this.title, this.page, this.quantity, this.author_id, this.bookshelve_id, this.id], (err) => {
-            callback(err, this);
+    update() {
+        return new Promise((resolve, reject) => {
+            db.query('UPDATE books SET title = ?, page = ?, quantity = ?, author_id = ?, bookshelve_id = ?  WHERE id = ?', [this.title, this.page, this.quantity, this.author_id, this.bookshelve_id, this.id], (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(this);
+                }
+            });
         });
     }
 

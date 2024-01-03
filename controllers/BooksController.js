@@ -1,101 +1,102 @@
 const Book = require('../models/Book');
+const Author = require('../models/Author');
+const Bookshelve = require('../models/Bookshelve');
 
 // visualizações:
 
 module.exports.index = (req, res) => {
-    Book.getAll((err, books) => {
-        if (err) {
-            console.error('Erro ao obter livros:', err);
-        } else {
-            res.render('books/index', { books });
-        }
-    });
+
+    Book.getAll()
+        .then(results => {
+            res.json(results);
+        })
+        .catch(error => {
+            res.json({ 'message': 'Erro interno ao obter livros', error: err });
+        });
+
 };
 
+module.exports.showBook = (req, res) => {
+    const bookId = req.params.id;
 
-module.exports.showBooks = (req, res) => {
-    const BooksId = req.params.id;
-
-    Book.getById(BooksId, (err, book) => {
-        if (err) {
-            throw new Error('Erro ao obter livro por ID: ', err);
-        } else {
+    Book.getById(bookId)
+        .then(book => {
             if (book && book.length > 0) {
-                res.render('books/show', { book });
+                res.json(book);
             } else {
-                throw new Error('livro não encontrado: ', err);
+                res.status(404).json({ message: 'Livro não encontrado' });
             }
-        }
-    });
+        })
+        .catch(error => {
+            res.status(500).json({ message: 'Erro interno ao obter livro por ID', error: error });
+        });
+
 };
 
+// operações:
 
-module.exports.renderEditForm = (req, res) => {
-    const BooksId = req.params.id;
-
-    Book.getById(BooksId, (err, book) => {
-        if (err) {
-            throw new Error('Erro ao obter livro por ID: ', err);
-        } else {
-            if (book && book.length > 0) {
-                res.render('books/edit', { book });
-            } else {
-                throw new Error('livro não encontrado: ', err);
-            }
-        }
-    });
-};
-
-
-module.exports.renderNewForm = (req, res) => {
-    res.render('books/new')
-}
-
-
-// metodos:
-
-
-module.exports.createBooks = (req, res) => {
+module.exports.createBook = async (req, res, next) => {
     const newBook = new Book(req.body);
 
-    newBook.save((err, savedBook) => {
-        if (err) {
-            throw new Error('Erro ao criar livro:', err.message);
-        } else {
-            console.log('Livro criado com sucesso:', savedBook);
-            res.redirect('/books');
-        }
-    });
+    try {
+        const savedBook = await newBook.save();
+        res.json({ message: 'Livro criado com sucesso', savedBook });
+    } catch (error) {
+        next(new Error('Erro interno ao criar livro'));
+    }
 };
 
-module.exports.editBooks = (req, res) => {
-    const BooksId = req.params.id;
+module.exports.editBook = async (req, res, next) => {
+    const BookId = req.params.id;
     const { title, page, quantity, author_id, bookshelve_id } = req.body;
 
-    const updatedBooks = new Book({ title, page, quantity, author_id, bookshelve_id });
-    updatedBooks.id = BooksId;
+    try {
 
-    updatedBooks.update((err, result) => {
-        if (err) {
-            throw new Error('Erro ao atualizar livro:', err);
-        } else {
-            console.log('livro atualizado com sucesso:', result);
-            res.redirect(`/books/${BooksId}`);
+        const existingBook = await Book.getById(BookId);
+
+        if (!existingBook || existingBook.length === 0) {
+            return res.status(404).json({ error: 'Livro não encontrado' });
         }
-    });
+
+        const existingAuthor = await Author.getById(author_id);
+
+        if (!existingAuthor || existingAuthor.length === 0) {
+            return res.status(404).json({ error: 'Autor não encontrado' });
+        }
+
+        const existingBookshelve = await Bookshelve.getById(bookshelve_id);
+
+        if (!existingBookshelve || existingBookshelve.length === 0) {
+            return res.status(404).json({ error: 'Estante não encontrada' });
+        }
+
+        const updatedBook = new Book({ title, page, quantity, author_id, bookshelve_id });
+        updatedBook.id = BookId;
+
+        await updatedBook.update();
+
+        res.json({ message: 'Livro atualizado com sucesso', updatedBook });
+    } catch (error) {
+        next(new Error('Erro interno ao editar Livro'));
+    }
+
 };
 
-module.exports.deleteBooks = (req, res) => {
-    const BooksId = req.params.id
+module.exports.deleteBook = async (req, res, next) => {
+    const bookId = req.params.id
 
-    Book.deleteById(BooksId, (err) => {
-        if (err) {
-            throw new Error('Erro ao excluir livro:', err);
-            res.status(500).json({ error: 'Erro interno do servidor' });
-        } else {
-            console.log('livro excluído com sucesso.');
-            res.redirect('/books');
+    try {
+        const existingBook = await Book.getById(bookId);
+
+        if (!existingBook || existingBook.length === 0) {
+            return res.status(404).json({ error: 'Livro não encontrado' });
         }
-    });
 
-}
+        Book.deleteById(bookId)
+
+        res.json({ message: 'Livro excluido com sucesso' });
+    } catch (error) {
+        next(new Error('Erro interno ao excluir Livro'));
+    }
+
+};

@@ -13,20 +13,28 @@ class Customer extends DefaultModel {
 
     static modelName = 'customers';
 
-    save(callback) {
-        db.query('INSERT INTO customers (name, phone, adress) VALUES (?, ?, ?)', [this.name, this.phone, this.adress], (err, results) => {
-            if (err) {
-                callback(err, null);
-            } else {
-                this.id = results.insertId;
-                callback(null, this);
-            }
+    save() {
+        return new Promise((resolve, reject) => {
+            db.query('INSERT INTO customers (name, phone, adress) VALUES (?, ?, ?)', [this.name, this.phone, this.adress], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    this.id = result.insertId;
+                    resolve(this);
+                }
+            });
         });
     }
 
-    update(callback) {
-        db.query('UPDATE customers SET name = ?, phone = ?, adress = ? WHERE id = ?', [this.name, this.phone, this.adress, this.id], (err) => {
-            callback(err, this);
+    update() {
+        return new Promise((resolve, reject) => {
+            db.query('UPDATE customers SET name = ?, phone = ?, adress = ? WHERE id = ?', [this.name, this.phone, this.adress, this.id], (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(this);
+                }
+            });
         });
     }
 
