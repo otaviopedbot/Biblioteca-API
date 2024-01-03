@@ -31,22 +31,21 @@ module.exports.showAuthor = (req, res) => {
 
 };
 
+//operações
 
-module.exports.createAuthor = async (req, res) => {
+module.exports.createAuthor = async (req, res, next) => {
     const newAuthor = new Author(req.body);
 
-    newAuthor.save()
-        .then(savedAuthor => {
-            res.json({ 'message': 'Autor criado com sucesso', savedAuthor });
-        })
-        .catch(error => {
-            throw new Error('Erro ao criar autor: ', error);
-        });
-
+    try {
+        const savedAuthor = await newAuthor.save();
+        res.json({ message: 'Autor criado com sucesso', savedAuthor });
+    } catch (error) {
+        next(new Error('Erro interno ao criar autor'));
+    }
 };
 
 
-module.exports.editAuthor = async (req, res) => {
+module.exports.editAuthor = async (req, res, next) => {
     const authorId = req.params.id;
     const { name } = req.body;
 
@@ -64,50 +63,13 @@ module.exports.editAuthor = async (req, res) => {
 
         res.json({ message: 'Autor atualizado com sucesso', updatedAuthor });
     } catch (error) {
-        throw new Error('Erro interno ao editar autor');
+        next(new Error('Erro interno ao editar autor'));
     }
-
-
-
-
-
-
-
-
-
-
-    module.exports.editAuthor = async (req, res) => {
-        try {
-            // Lógica de edição do autor...
-    
-            // Se ocorrer um erro interno, lançar uma exceção
-            if (algumaCondicao) {
-                throw new Error('Erro interno ao editar autor');
-            }
-    
-            // Restante da lógica...
-    
-            res.json({ message: 'Autor editado com sucesso' });
-        } catch (error) {
-            console.error('Erro interno ao editar autor:', error);
-            res.status(500).json({ error: 'Erro interno ao editar autor', message: error.message });
-        }
-    };
-    
-
-
-
-
-
-
-
-
-
 
 };
 
 
-module.exports.deleteAuthor = async (req, res) => {
+module.exports.deleteAuthor = async (req, res, next) => {
     const authorId = req.params.id
 
     try {
@@ -121,7 +83,7 @@ module.exports.deleteAuthor = async (req, res) => {
 
         res.json({ message: 'Autor excluido com sucesso' });
     } catch (error) {
-        throw new Error('Erro interno ao excluir autor: ', error);
+        next(new Error('Erro interno ao excluir autor'));
     }
 
 };
