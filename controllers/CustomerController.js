@@ -19,11 +19,10 @@ module.exports.showCustomer = (req, res) => {
 
     Customer.getById(customerId)
         .then(customer => {
-            if (customer && customer.length > 0) {
-                res.json(customer);
-            } else {
-                res.status(404).json({ message: 'Cliente não encontrado' });
+            if (customer.length > 0) {
+                return res.json(customer);
             }
+            return res.status(404).json({ message: 'Cliente não encontrado' });
         })
         .catch(error => {
             res.status(500).json({ message: 'Erro interno ao obter cliente por ID', error: error });
@@ -34,14 +33,14 @@ module.exports.showCustomer = (req, res) => {
 // metodos:
 
 module.exports.createCustomer = async (req, res, next) => {
-    const {name, phone, adress} = req.body
+    const { name, phone, adress } = req.body
 
     try {
         if (!name || !phone || !adress) {
             next(new Error('Dados não informados ao criar cliente'))
         }
 
-        const newCustomer = new Customer({name, phone, adress});
+        const newCustomer = new Customer({ name, phone, adress });
 
         const savedCustomer = await newCustomer.save();
         res.json({ message: 'Cliente criado com sucesso', savedCustomer });
@@ -57,7 +56,7 @@ module.exports.editCustomer = async (req, res, next) => {
     try {
         const existingCustomer = await Customer.getById(customerId);
 
-        if (!existingCustomer || existingCustomer.length === 0) {
+        if (existingCustomer.length === 0) {
             return res.status(404).json({ error: 'Cliente não encontrado' });
         }
 
@@ -83,7 +82,7 @@ module.exports.deleteCustomer = async (req, res, next) => {
     try {
         const existingCustomer = await Customer.getById(customerId);
 
-        if (!existingCustomer || existingCustomer.length === 0) {
+        if (existingCustomer.length === 0) {
             return res.status(404).json({ error: 'Cliente não encontrado' });
         }
 

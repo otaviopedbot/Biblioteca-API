@@ -19,11 +19,10 @@ module.exports.showAuthor = (req, res) => {
 
     Author.getById(authorId)
         .then(author => {
-            if (author && author.length > 0) {
-                res.json(author);
-            } else {
-                res.status(404).json({ message: 'Autor não encontrado' });
+            if (author.length > 0) {
+                return res.json(author);
             }
+            return res.status(404).json({ message: 'Autor não encontrado' });
         })
         .catch(error => {
             res.status(500).json({ message: 'Erro interno ao obter autor por ID', error: error });
@@ -41,7 +40,7 @@ module.exports.createAuthor = async (req, res, next) => {
             next(new Error('Nome não informado ao criar autor'));
         }
 
-        const newAuthor = new Author({name});
+        const newAuthor = new Author({ name });
 
         const savedAuthor = await newAuthor.save();
         res.json({ message: 'Autor criado com sucesso', savedAuthor });
@@ -57,7 +56,8 @@ module.exports.editAuthor = async (req, res, next) => {
     try {
         const existingAuthor = await Author.getById(authorId);
 
-        if (!existingAuthor || existingAuthor.length === 0) {
+        if (existingAuthor.length === 0) {
+            console.log(existingAuthor)
             return res.status(404).json({ error: 'Autor não encontrado' });
         }
 
@@ -83,7 +83,7 @@ module.exports.deleteAuthor = async (req, res, next) => {
     try {
         const existingAuthor = await Author.getById(authorId);
 
-        if (!existingAuthor || existingAuthor.length === 0) {
+        if (existingAuthor.length === 0) {
             return res.status(404).json({ error: 'Autor não encontrado' });
         }
 

@@ -21,11 +21,10 @@ module.exports.showBook = (req, res) => {
 
     Book.getById(bookId)
         .then(book => {
-            if (book && book.length > 0) {
-                res.json(book);
-            } else {
-                res.status(404).json({ message: 'Livro não encontrado' });
+            if (book.length > 0) {
+                return res.json(book);
             }
+            return res.status(404).json({ message: 'Livro não encontrado' });
         })
         .catch(error => {
             res.status(500).json({ message: 'Erro interno ao obter livro por ID', error: error });
@@ -44,7 +43,7 @@ module.exports.createBook = async (req, res, next) => {
             next(new Error('Dados não informados ao criar livro'));
         }
 
-        const newBook = new Book({title, page, quantity, author_id, bookshelve_id});
+        const newBook = new Book({ title, page, quantity, author_id, bookshelve_id });
 
         const savedBook = await newBook.save();
         res.json({ message: 'Livro criado com sucesso', savedBook });
@@ -61,7 +60,7 @@ module.exports.editBook = async (req, res, next) => {
 
         const existingBook = await Book.getById(BookId);
 
-        if (!existingBook || existingBook.length === 0) {
+        if (existingBook.length === 0) {
             return res.status(404).json({ error: 'Livro não encontrado' });
         }
 
@@ -99,7 +98,7 @@ module.exports.deleteBook = async (req, res, next) => {
     try {
         const existingBook = await Book.getById(bookId);
 
-        if (!existingBook || existingBook.length === 0) {
+        if (existingBook.length === 0) {
             return res.status(404).json({ error: 'Livro não encontrado' });
         }
 

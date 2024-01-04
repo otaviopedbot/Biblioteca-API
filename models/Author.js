@@ -1,4 +1,4 @@
-const DefaultModel = require('../classes/DefaultModel')
+const DefaultModel = require('./DefaultModel')
 const db = require('../database/db');
 
 class Author extends DefaultModel {
@@ -21,7 +21,7 @@ class Author extends DefaultModel {
             });
         });
     }
-    
+
     update() {
         return new Promise((resolve, reject) => {
             db.query('UPDATE authors SET name = ? WHERE id = ?', [this.name, this.id], (err) => {

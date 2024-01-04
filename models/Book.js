@@ -1,4 +1,4 @@
-const DefaultModel = require('../classes/DefaultModel')
+const DefaultModel = require('./DefaultModel')
 const db = require('../database/db');
 
 
@@ -18,14 +18,14 @@ class Book extends DefaultModel {
     save() {
         return new Promise((resolve, reject) => {
             db.query('INSERT INTO books (title, page, quantity, author_id, bookshelve_id) VALUES (?, ?, ?, ?, ?)',
-            [this.title, this.page, this.quantity, this.author_id, this.bookshelve_id], (err, result) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    this.id = result.insertId;
-                    resolve(this);
-                }
-            });
+                [this.title, this.page, this.quantity, this.author_id, this.bookshelve_id], (err, result) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        this.id = result.insertId;
+                        resolve(this);
+                    }
+                });
         });
     }
 

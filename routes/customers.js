@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const CustomersController = require('../controllers/CustomersController');
+const CustomerController = require('../controllers/CustomerController');
 
 router.route('/')
-    .get(CustomersController.index)
-    .post(CustomersController.createCustomer)
+    .get(CustomerController.index)
+    .post(CustomerController.createCustomer)
 
 router.route('/:id')
-    .put(CustomersController.editCustomer)
-    .get(CustomersController.showCustomer)
-    .delete(CustomersController.deleteCustomer)
+    .put(CustomerController.editCustomer)
+    .get(CustomerController.showCustomer)
+    .delete(CustomerController.deleteCustomer)
 
 module.exports = router;

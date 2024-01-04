@@ -19,11 +19,10 @@ module.exports.showBookshelve = (req, res) => {
 
     Bookshelve.getById(bookshelveId)
         .then(bookshelve => {
-            if (bookshelve && bookshelve.length > 0) {
-                res.json(bookshelve);
-            } else {
-                res.status(404).json({ message: 'Estante não encontrada' });
+            if (bookshelve.length > 0) {
+                return res.json(bookshelve);
             }
+            return res.status(404).json({ message: 'Estante não encontrada' });
         })
         .catch(error => {
             res.status(500).json({ message: 'Erro interno ao obter estante por ID', error: error });
@@ -34,7 +33,7 @@ module.exports.showBookshelve = (req, res) => {
 // metodos:
 
 module.exports.createBookshelve = async (req, res, next) => {
-    const {name} = req.body    
+    const { name } = req.body
 
     try {
 
@@ -42,7 +41,7 @@ module.exports.createBookshelve = async (req, res, next) => {
             next(new Error('Dados não informados ao criar estante'))
         }
 
-        const newBookshelve = new Bookshelve({name});
+        const newBookshelve = new Bookshelve({ name });
 
         const savedBookshelve = await newBookshelve.save();
         res.json({ message: 'Estante criada com sucesso', savedBookshelve });
@@ -59,7 +58,7 @@ module.exports.editBookshelve = async (req, res, next) => {
 
         const existingBookshelve = await Bookshelve.getById(bookshelveId);
 
-        if (!existingBookshelve || existingBookshelve.length === 0) {
+        if (existingBookshelve.length === 0) {
             return res.status(404).json({ error: 'Estante não encontrada' });
         }
 
@@ -85,7 +84,7 @@ module.exports.deleteBookshelve = async (req, res, next) => {
     try {
         const existingBookshelve = await Bookshelve.getById(bookshelveId);
 
-        if (!existingBookshelve || existingBookshelve.length === 0) {
+        if (existingBookshelve.length === 0) {
             return res.status(404).json({ error: 'Estante não encontrada' });
         }
 

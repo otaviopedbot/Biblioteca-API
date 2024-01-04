@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const BooksController = require('../controllers/BooksController');
+const BookController = require('../controllers/BookController');
 
 router.route('/')
-    .get(BooksController.index)
-    .post(BooksController.createBook)
+    .get(BookController.index)
+    .post(BookController.createBook)
 
 router.route('/:id')
-    .put(BooksController.editBook)
-    .get(BooksController.showBook)
-    .delete(BooksController.deleteBook)
+    .put(BookController.editBook)
+    .get(BookController.showBook)
+    .delete(BookController.deleteBook)
 
 module.exports = router;

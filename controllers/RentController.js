@@ -21,11 +21,10 @@ module.exports.showRent = (req, res) => {
 
     Rent.getById(rentsId)
         .then(rent => {
-            if (rent && rent.length > 0) {
-                res.json(rent);
-            } else {
-                res.status(404).json({ message: 'Emprestimo não encontrado' });
+            if (rent.length > 0) {
+                return res.json(rent);
             }
+            return res.status(404).json({ message: 'Emprestimo não encontrado' });
         })
         .catch(error => {
             res.status(500).json({ message: 'Erro interno ao obter emprestimo por ID', error: error });
@@ -56,7 +55,7 @@ module.exports.createRent = async (req, res, next) => {
             return res.status(404).json({ error: 'Livro não encontrado' });
         }
 
-        const newrent = new Rent({date, customer_id, book_id});
+        const newrent = new Rent({ date, customer_id, book_id });
 
         const savedRent = await newrent.save();
         res.json({ message: 'Emprestimo criado com sucesso', savedRent });
@@ -73,7 +72,7 @@ module.exports.editRent = async (req, res, next) => {
 
         const existingRent = await Rent.getById(rentId);
 
-        if (!existingRent || existingRent.length === 0) {
+        if (existingRent.length === 0) {
             return res.status(404).json({ error: 'Emprestimo não encontrado' });
         }
 
@@ -111,7 +110,7 @@ module.exports.deleteRent = async (req, res, next) => {
     try {
         const existingRent = await Rent.getById(rentId);
 
-        if (!existingRent || existingRent.length === 0) {
+        if (existingRent.length === 0) {
             return res.status(404).json({ error: 'Autor não encontrado' });
         }
 

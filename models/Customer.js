@@ -1,4 +1,4 @@
-const DefaultModel = require('../classes/DefaultModel')
+const DefaultModel = require('./DefaultModel')
 const db = require('../database/db');
 
 

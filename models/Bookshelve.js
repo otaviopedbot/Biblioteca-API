@@ -1,8 +1,8 @@
-const DefaultModel = require('../classes/DefaultModel')
+const DefaultModel = require('./DefaultModel')
 const db = require('../database/db');
 
 
-class Bookshelve extends DefaultModel{
+class Bookshelve extends DefaultModel {
 
     constructor({ name }) {
         super();

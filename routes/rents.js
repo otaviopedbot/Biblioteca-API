@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const RentsController = require('../controllers/RentsController');
+const RentController = require('../controllers/RentController');
 
 router.route('/')
-    .get(RentsController.index)
-    .post(RentsController.createRent)
+    .get(RentController.index)
+    .post(RentController.createRent)
 
 router.route('/:id')
-    .put(RentsController.editRent)
-    .get(RentsController.showRent)
-    .delete(RentsController.deleteRent)
+    .put(RentController.editRent)
+    .get(RentController.showRent)
+    .delete(RentController.deleteRent)
 
 module.exports = router;
