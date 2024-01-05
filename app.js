@@ -23,7 +23,7 @@ app.set('views', path.join(__dirname, '/views'))
 // rotas:
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.send('routes: /customers, /authors, /bookshelves, /books, /rents');
 });
 
 app.use('/customers', customersRoutes);
