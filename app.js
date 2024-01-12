@@ -13,7 +13,9 @@ const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 
 const app = express();
+const cors = require('cors');
 
+app.use(cors({ origin: 'http://localhost:8000' }));
 app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

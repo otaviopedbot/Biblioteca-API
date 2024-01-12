@@ -4,7 +4,7 @@ services:
   db:
     container_name: mysql_libr
     image: mysql:5.7
-    restart: always
+    # restart: always
     environment:
       MYSQL_DATABASE: 'db'
       MYSQL_USER: 'user'
