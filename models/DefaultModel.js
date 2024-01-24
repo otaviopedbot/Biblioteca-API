@@ -28,6 +28,24 @@ class DefaultModel {
         });
     }
 
+    static findOne(criteria) {
+        const columns = Object.keys(criteria);
+        const values = Object.values(criteria);
+    
+        const conditions = columns.map(column => `${column} = ?`).join(' AND ');
+    
+        return new Promise((resolve, reject) => {
+            const query = `SELECT * FROM ${this.modelName} WHERE ${conditions} LIMIT 1`;
+            db.query(query, values, (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result[0]);
+                }
+            });
+        });
+    }    
+
     static deleteById(id) {
         return new Promise((resolve, reject) => {
             db.query(`DELETE FROM ${this.modelName} WHERE id = ?`, [id], (err) => {

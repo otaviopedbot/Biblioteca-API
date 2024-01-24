@@ -94,4 +94,4 @@ module.exports.deleteAuthor = async (req, res, next) => {
         next(new Error('Erro interno ao excluir autor'));
     }
 
-};
+};  

@@ -43,16 +43,26 @@ module.exports.createRent = async (req, res, next) => {
             next(new Error('Dados não informados ao criar emprestimo'))
         }
 
-        const existingCustomer = await Customer.getById(customer_id);
+        customer_id = email.trim();
+        book_id = password.trim();
 
-        if (!existingCustomer || existingCustomer.length === 0) {
-            return res.status(404).json({ error: 'Cliente não encontrado' });
+        if (customer_id === '' || book_id === '') {
+            return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
         }
 
-        const existingBook = await Book.getById(book_id);
+        // Verifica se o cliente e o livro existem
 
-        if (!existingBook || existingBook.length === 0) {
-            return res.status(404).json({ error: 'Livro não encontrado' });
+        const customerExists = await Customer.findOne({ id: id });
+        const bookExists = await Book.findOne({ id: id });
+        
+        if (customerExists || bookExists) {
+            if (!customerExists) {
+                return res.status(422).json({ message: 'Cliente não encontrado' });
+            }
+        
+            if (!bookExists) {
+                return res.status(422).json({ message: 'Livro não encontrado' });
+            }
         }
 
         const newrent = new Rent({ date, customer_id, book_id });
