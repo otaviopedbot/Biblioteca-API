@@ -1,5 +1,4 @@
 const User = require('../models/User');
-const { use } = require('../routes/customers');
 
 // visualizações:
 
@@ -39,7 +38,13 @@ module.exports.login = (req, res) => {
 
 };
 
-//operações
+module.exports.logout = (req, res) => {
+
+
+
+};
+
+// operações:
 
 module.exports.createUser = async (req, res, next) => {
     let { username, email, password } = req.body;
@@ -63,14 +68,12 @@ module.exports.createUser = async (req, res, next) => {
         const usernameExists = await User.findOne({ username: username });
         const emailExists = await User.findOne({ email: email });
 
-        if (usernameExists || emailExists) {
-            if (usernameExists) {
-                return res.status(422).json({ message: 'Nome de usuário já cadastrado' });
-            }
+        if (usernameExists) {
+            return res.status(422).json({ message: 'Nome de usuário já cadastrado' });
+        }
 
-            if (emailExists) {
-                return res.status(422).json({ message: 'E-mail já cadastrado' });
-            }
+        if (emailExists) {
+            return res.status(422).json({ message: 'E-mail já cadastrado' });
         }
 
         // Salva o usuário
@@ -109,15 +112,15 @@ module.exports.editUser = async (req, res, next) => {
         const usernameExists = await User.findOne({ username: username });
         const emailExists = await User.findOne({ email: email });
 
-        if (usernameExists || emailExists) {
-            if (usernameExists) {
-                return res.status(422).json({ message: 'Nome de usuário já cadastrado' });
-            }
-
-            if (emailExists) {
-                return res.status(422).json({ message: 'E-mail já cadastrado' });
-            }
+        if (usernameExists && usernameExists.id != userId) {
+            return res.status(422).json({ message: 'Nome de usuário já cadastrado' });
         }
+
+        if (emailExists && emailExists.id != userId) {
+            return res.status(422).json({ message: 'E-mail já cadastrado' });
+        }
+
+        // atualiza usuario
 
         const updatedUser = new User({ username, email, password });
         updatedUser.id = userId;

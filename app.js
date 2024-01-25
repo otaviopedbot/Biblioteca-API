@@ -16,6 +16,7 @@ const bookshelvesRoutes = require('./routes/bookshelves')
 const booksRoutes = require('./routes/books')
 const rentsRoutes = require('./routes/rents')
 const usersRoutes = require('./routes/users')
+const userDetailsRoutes = require('./routes/userDetails')
 
 const app = express();
 const cors = require('cors');
@@ -27,11 +28,11 @@ app.use(bodyParser.json());
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '/views'))
 
-// rotas:
-
 app.get('/', (req, res) => {
     res.send('routes: /customers, /authors, /bookshelves, /books, /rents, /register, /login');
 });
+
+// rotas crud
 
 app.use('/customers', customersRoutes);
 app.use('/authors', authorsRoutes);
@@ -39,6 +40,9 @@ app.use('/bookshelves', bookshelvesRoutes);
 app.use('/books', booksRoutes);
 app.use('/rents', rentsRoutes);
 app.use('/users', usersRoutes);
+app.use('/details', userDetailsRoutes);
+
+// rotas login
 
 app.post('/register', UserController.createUser);
 // app.post('/login', UserController.);

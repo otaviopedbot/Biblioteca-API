@@ -30,15 +30,33 @@ module.exports.showCustomer = (req, res) => {
 
 };
 
-// metodos:
+// operações:
 
 module.exports.createCustomer = async (req, res, next) => {
-    const { name, phone, adress } = req.body
+    let { name, phone, adress } = req.body
 
     try {
         if (!name || !phone || !adress) {
-            next(new Error('Dados não informados ao criar cliente'))
+            return res.status(422).json({ message: 'Preencha todos os campos' });
         }
+
+        name = name.trim();
+        phone = phone.trim();
+        adress = adress.trim();
+
+        if (name === '' || phone === '' || adress === '') {
+            return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
+        }
+
+        // Verifica se o cliente existe
+
+        const nameExists = await Customer.findOne({ name: name });
+
+        if (nameExists) {
+            return res.status(422).json({ message: 'Nome já cadastrado' });
+        }
+
+        // Salva o cliente
 
         const newCustomer = new Customer({ name, phone, adress });
 
@@ -51,18 +69,32 @@ module.exports.createCustomer = async (req, res, next) => {
 
 module.exports.editCustomer = async (req, res, next) => {
     const customerId = req.params.id;
-    const { name, phone, adress } = req.body;
+    let { name, phone, adress } = req.body;
 
     try {
-        const existingCustomer = await Customer.getById(customerId);
+        const existingCustomer = await Customer.findOne({ id: customerId });
 
-        if (existingCustomer.length === 0) {
+        if (!existingCustomer) {
             return res.status(404).json({ error: 'Cliente não encontrado' });
         }
 
         if (!name || !phone || !adress) {
-            next(new Error('Dados não informados ao criar cliente'))
+            return res.status(422).json({ message: 'Preencha todos os campos' });
         }
+
+        name = name.trim();
+        phone = phone.trim();
+        adress = adress.trim();
+
+        // Verifica se os dados do usuário já existem
+
+        const nameExists = await Customer.findOne({ name: name });
+
+        if (nameExists && nameExists.id != customerId) {
+            return res.status(422).json({ message: 'Nome já cadastrado' });
+        }
+
+        // atualiza cliente
 
         const updatedCustomer = new Customer({ name, phone, adress });
         updatedCustomer.id = customerId;
@@ -77,20 +109,20 @@ module.exports.editCustomer = async (req, res, next) => {
 };
 
 module.exports.deleteCustomer = async (req, res, next) => {
-    const customerId = req.params.id
+    const CustomerId = req.params.id
 
     try {
-        const existingCustomer = await Customer.getById(customerId);
+        const existingCustomer = await Customer.findOne({ id: CustomerId });
 
-        if (existingCustomer.length === 0) {
+        if (!existingCustomer) {
             return res.status(404).json({ error: 'Cliente não encontrado' });
         }
 
-        Customer.deleteById(customerId)
+        Customer.deleteById(CustomerId)
 
         res.json({ message: 'Cliente excluido com sucesso' });
     } catch (error) {
-        next(new Error('Erro interno ao excluir cliente'));
+        next(new Error('Erro interno ao excluir Cliente'));
     }
 
 };

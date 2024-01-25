@@ -30,20 +30,36 @@ module.exports.showBookshelve = (req, res) => {
 
 };
 
-// metodos:
+// operações:
 
 module.exports.createBookshelve = async (req, res, next) => {
-    const { name } = req.body
+    let { name } = req.body
 
     try {
-
         if (!name) {
-            next(new Error('Dados não informados ao criar estante'))
+            return res.status(422).json({ message: 'Preencha todos os campos' });
         }
+
+        name = name.trim();
+
+        if (name === '') {
+            return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
+        }
+
+        // Verifica se a estante existe
+
+        const nameExists = await Bookshelve.findOne({ name: name });
+
+        if (nameExists) {
+            return res.status(422).json({ message: 'Nome já cadastrado' });
+        }
+
+        // Salva a estante
 
         const newBookshelve = new Bookshelve({ name });
 
         const savedBookshelve = await newBookshelve.save();
+
         res.json({ message: 'Estante criada com sucesso', savedBookshelve });
     } catch (error) {
         next(new Error('Erro interno ao criar estante'));
@@ -52,26 +68,41 @@ module.exports.createBookshelve = async (req, res, next) => {
 
 module.exports.editBookshelve = async (req, res, next) => {
     const bookshelveId = req.params.id;
-    const { name } = req.body;
+    let { name } = req.body;
 
     try {
+        const existingBookshelve = await Bookshelve.findOne({ id: bookshelveId });
 
-        const existingBookshelve = await Bookshelve.getById(bookshelveId);
-
-        if (existingBookshelve.length === 0) {
+        if (!existingBookshelve) {
             return res.status(404).json({ error: 'Estante não encontrada' });
         }
 
         if (!name) {
-            next(new Error('Dados não informados ao criar estante'))
+            return res.status(422).json({ message: 'Preencha todos os campos' });
         }
+
+        name = name.trim();
+
+        if (name === '') {
+            return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
+        }
+
+        // Verifica se os dados da estante já existem
+
+        const nameExists = await Bookshelve.findOne({ name: name });
+
+        if (nameExists && nameExists.id != bookshelveId) {
+            return res.status(422).json({ message: 'Nome já cadastrado' });
+        }
+
+        // atualiza a estante
 
         const updatedBookshelve = new Bookshelve({ name });
         updatedBookshelve.id = bookshelveId;
 
         await updatedBookshelve.update();
 
-        res.json({ message: 'Estante atualizado com sucesso', updatedBookshelve });
+        res.json({ message: 'Estante atualizada com sucesso', updatedBookshelve });
     } catch (error) {
         next(new Error('Erro interno ao editar estante'));
     }
@@ -82,9 +113,9 @@ module.exports.deleteBookshelve = async (req, res, next) => {
     const bookshelveId = req.params.id
 
     try {
-        const existingBookshelve = await Bookshelve.getById(bookshelveId);
+        const existingBookshelve = await Bookshelve.findOne({ id: bookshelveId });
 
-        if (existingBookshelve.length === 0) {
+        if (!existingBookshelve) {
             return res.status(404).json({ error: 'Estante não encontrada' });
         }
 
@@ -92,7 +123,7 @@ module.exports.deleteBookshelve = async (req, res, next) => {
 
         res.json({ message: 'Estante excluida com sucesso' });
     } catch (error) {
-        next(new Error('Erro interno ao excluir estante'));
+        next(new Error('Erro interno ao excluir Estante'));
     }
 
 };

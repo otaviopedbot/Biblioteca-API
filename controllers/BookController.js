@@ -35,17 +35,48 @@ module.exports.showBook = (req, res) => {
 // operações:
 
 module.exports.createBook = async (req, res, next) => {
-    const { title, page, quantity, author_id, bookshelve_id } = req.body;
+    let { title, page, quantity, author_id, bookshelve_id } = req.body;
 
     try {
 
         if (!title || !page || !quantity || !author_id || !bookshelve_id) {
-            next(new Error('Dados não informados ao criar livro'));
+            return res.status(422).json({ message: 'Preencha todos os campos' });
         }
+
+        title = title.trim();
+
+        if (title === '') {
+            return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
+        }
+
+        // Verifica se o titulo já existe
+
+        const titleExists = await Book.findOne({ title: title });
+
+        if (titleExists) {
+            return res.status(422).json({ message: 'Título já cadastrado' });
+        }
+
+        // verifica se o autor e a estante existem
+
+        const existingAuthor = await Author.findOne({id:author_id});
+
+        if (!existingAuthor) {
+            return res.status(404).json({ message: 'Autor não encontrado' });
+        }
+
+        const existingBookshelve = await Bookshelve.findOne({id:bookshelve_id});
+
+        if (!existingBookshelve) {
+            return res.status(404).json({ message: 'Estante não encontrada' });
+        }
+
+        // Salva o livro
 
         const newBook = new Book({ title, page, quantity, author_id, bookshelve_id });
 
         const savedBook = await newBook.save();
+
         res.json({ message: 'Livro criado com sucesso', savedBook });
     } catch (error) {
         next(new Error('Erro interno ao criar livro'));
@@ -53,36 +84,49 @@ module.exports.createBook = async (req, res, next) => {
 };
 
 module.exports.editBook = async (req, res, next) => {
-    const BookId = req.params.id;
-    const { title, page, quantity, author_id, bookshelve_id } = req.body;
+    const bookId = req.params.id;
+    let { title, page, quantity, author_id, bookshelve_id } = req.body;
 
     try {
+        const existingBook = await Book.findOne({ id: bookId });
 
-        const existingBook = await Book.getById(BookId);
-
-        if (existingBook.length === 0) {
+        if (!existingBook) {
             return res.status(404).json({ error: 'Livro não encontrado' });
         }
 
         if (!title || !page || !quantity || !author_id || !bookshelve_id) {
-            next(new Error('Dados não informados ao atualizar livro'));
+            return res.status(422).json({ message: 'Preencha todos os campos' });
         }
 
-        const existingAuthor = await Author.getById(author_id);
+        title = title.trim();
 
-        if (!existingAuthor || existingAuthor.length === 0) {
-            return res.status(404).json({ error: 'Autor não encontrado' });
+        // Verifica se o titulo já existe
+
+        const titleExists = await Book.findOne({ title: title });
+
+        if (titleExists && titleExists.id != bookId) {
+            return res.status(422).json({ message: 'Título já cadastrado' });
         }
 
-        const existingBookshelve = await Bookshelve.getById(bookshelve_id);
+        // verifica se o autor e a estante existem
 
-        if (!existingBookshelve || existingBookshelve.length === 0) {
-            return res.status(404).json({ error: 'Estante não encontrada' });
+        const existingAuthor = await Author.findOne({id:author_id});
+
+        if (!existingAuthor) {
+            return res.status(404).json({ message: 'Autor não encontrado' });
         }
+
+        const existingBookshelve = await Bookshelve.findOne({id:bookshelve_id});
+
+        if (!existingBookshelve) {
+            return res.status(404).json({ message: 'Estante não encontrada' });
+        }
+
+        // atualiza o livro
 
         const updatedBook = new Book({ title, page, quantity, author_id, bookshelve_id });
-        updatedBook.id = BookId;
-
+        updatedBook.id = bookId;
+        
         await updatedBook.update();
 
         res.json({ message: 'Livro atualizado com sucesso', updatedBook });
@@ -96,9 +140,9 @@ module.exports.deleteBook = async (req, res, next) => {
     const bookId = req.params.id
 
     try {
-        const existingBook = await Book.getById(bookId);
+        const existingBook = await Book.findOne({ id: bookId });
 
-        if (existingBook.length === 0) {
+        if (!existingBook) {
             return res.status(404).json({ error: 'Livro não encontrado' });
         }
 

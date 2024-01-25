@@ -28,7 +28,7 @@ class Rent extends DefaultModel {
 
     update() {
         return new Promise((resolve, reject) => {
-            db.query('UPDATE rents SET date = ?, customer_id = ?, book_id = ? WHERE id = ?', [this.date, this.customer_id, this.book_id, this.author_id, this.rentshelve_id, this.id], (err) => {
+            db.query('UPDATE rents SET date = ?, customer_id = ?, book_id = ? WHERE id = ?', [this.date, this.customer_id, this.book_id, this.id], (err) => {
                 if (err) {
                     reject(err);
                 } else {

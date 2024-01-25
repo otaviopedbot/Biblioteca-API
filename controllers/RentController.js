@@ -11,7 +11,7 @@ module.exports.index = (req, res) => {
             res.json(results);
         })
         .catch(error => {
-            res.json({ 'message': 'Erro interno ao obter emprestimos', error: error });
+            res.json({ 'message': 'Erro interno ao obter Aluguéis', error: error });
         });
 
 };
@@ -24,53 +24,57 @@ module.exports.showRent = (req, res) => {
             if (rent.length > 0) {
                 return res.json(rent);
             }
-            return res.status(404).json({ message: 'Emprestimo não encontrado' });
+            return res.status(404).json({ message: 'Aluguel não encontrado' });
         })
         .catch(error => {
-            res.status(500).json({ message: 'Erro interno ao obter emprestimo por ID', error: error });
+            res.status(500).json({ message: 'Erro interno ao obter Aluguel por ID', error: error });
         });
 
 };
 
-// metodos:
+// operações:
 
 module.exports.createRent = async (req, res, next) => {
     const { date, customer_id, book_id } = req.body;
 
     try {
 
-        if (!date, !customer_id, !book_id) {
-            next(new Error('Dados não informados ao criar emprestimo'))
-        }
-
-        customer_id = email.trim();
-        book_id = password.trim();
-
-        if (customer_id === '' || book_id === '') {
+        if (!date || !customer_id || !book_id) {
             return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
         }
 
-        // Verifica se o cliente e o livro existem
+        // Verifica se o cliente e o livro existe
 
-        const customerExists = await Customer.findOne({ id: id });
-        const bookExists = await Book.findOne({ id: id });
-        
-        if (customerExists || bookExists) {
-            if (!customerExists) {
-                return res.status(422).json({ message: 'Cliente não encontrado' });
-            }
-        
-            if (!bookExists) {
-                return res.status(422).json({ message: 'Livro não encontrado' });
-            }
+        const customerExists = await Customer.findOne({ id: customer_id });
+        const bookExists = await Book.findOne({ id: book_id });
+
+        if (!customerExists) {
+            return res.status(422).json({ message: 'Cliente não encontrado' });
         }
 
-        const newrent = new Rent({ date, customer_id, book_id });
+        if (!bookExists) {
+            return res.status(422).json({ message: 'Livro não encontrado' });
+        }
 
-        const savedRent = await newrent.save();
-        res.json({ message: 'Emprestimo criado com sucesso', savedRent });
+        // Verifica se o cliente já alugou o mesmo livro
+
+        rentExists = await Rent.findOne({ customer_id:customer_id, book_id:book_id });
+
+        if(rentExists){
+            return res.status(422).json({ message: 'Cliente já alugou este livro' });
+        }
+
+        // Salva aluguel
+
+        const newRent = new Rent({ date, customer_id, book_id });
+
+        const savedRent = await newRent.save();
+
+        res.json({ message: 'Aluguel criado com sucesso', savedRent });
+
     } catch (error) {
-        next(new Error('Erro interno ao criar emprestimo'));
+        console.log(error)
+        next(new Error('Erro interno ao criar Aluguel'));
     }
 };
 
@@ -80,36 +84,49 @@ module.exports.editRent = async (req, res, next) => {
 
     try {
 
-        const existingRent = await Rent.getById(rentId);
+        // Verifica se o Aluguel existe
 
-        if (existingRent.length === 0) {
-            return res.status(404).json({ error: 'Emprestimo não encontrado' });
+        const rentExists = await Rent.findOne({ id: rentId });
+
+        if (!rentExists) {
+            return res.status(422).json({ message: 'Aluguel não encontrado' });
         }
 
-        if (!date, !customer_id, !book_id) {
-            next(new Error('Dados não informados ao atualizar emprestimo'))
+        if (!date || !customer_id || !book_id) {
+            return res.status(422).json({ message: 'Dados não informados ao atualizar aluguel' });
         }
 
-        const existingCustomer = await Customer.getById(customer_id);
+        // Verifica se o cliente e o livro existe
 
-        if (!existingCustomer || existingCustomer.length === 0) {
-            return res.status(404).json({ error: 'Cliente não encontrado' });
+        const customerExists = await Customer.findOne({ id: customer_id });
+        const bookExists = await Book.findOne({ id: book_id });
+
+        if (!customerExists) {
+            return res.status(422).json({ message: 'Cliente não encontrado' });
         }
 
-        const existingBook = await Book.getById(book_id);
-
-        if (!existingBook || existingBook.length === 0) {
-            return res.status(404).json({ error: 'Livro não encontrado' });
+        if (!bookExists) {
+            return res.status(422).json({ message: 'Livro não encontrado' });
         }
 
-        const updatedrents = new Rent({ date, customer_id, book_id });
-        updatedrents.id = rentId;
+        // Verifica se o cliente já alugou o mesmo livro
 
-        await updatedrents.update();
+        const rentBookExists = await Rent.findOne({ customer_id:customer_id, book_id:book_id });
 
-        res.json({ message: 'Emprestimo atualizado com sucesso', updatedrents });
+        if(rentBookExists && rentBookExists.id != rentId){
+            return res.status(422).json({ message: 'Cliente já alugou este livro' });
+        }
+
+        // Atualiza Aluguel
+
+        const updatedRents = new Rent({ date, customer_id, book_id });
+        updatedRents.id = rentId;
+
+        await updatedRents.update();
+
+        res.json({ message: 'Aluguel atualizado com sucesso', updatedRents });
     } catch (error) {
-        next(new Error('Erro interno ao editar emprestimo'));
+        next(new Error('Erro interno ao editar Aluguel'));
     }
 
 };
@@ -118,17 +135,17 @@ module.exports.deleteRent = async (req, res, next) => {
     const rentId = req.params.id
 
     try {
-        const existingRent = await Rent.getById(rentId);
+        const existingRent = await Rent.findOne({ id: rentId });
 
-        if (existingRent.length === 0) {
-            return res.status(404).json({ error: 'Autor não encontrado' });
+        if (!existingRent) {
+            return res.status(404).json({ error: 'Aluguel não encontrado' });
         }
 
         Rent.deleteById(rentId)
 
-        res.json({ message: 'Emprestimo excluido com sucesso' });
+        res.json({ message: 'Aluguel excluido com sucesso' });
     } catch (error) {
-        next(new Error('Erro interno ao excluir emprestimo'));
+        next(new Error('Erro interno ao excluir Aluguel'));
     }
 
 };
