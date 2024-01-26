@@ -74,7 +74,7 @@ module.exports.editAuthor = async (req, res, next) => {
         const existingAuthor = await Author.findOne({ id: authorId });
 
         if (!existingAuthor) {
-            return res.status(404).json({ error: 'Estante não encontrada' });
+            return res.status(404).json({ error: 'Autor não encontrado' });
         }
 
         if (!name) {
@@ -104,7 +104,7 @@ module.exports.editAuthor = async (req, res, next) => {
 
         res.json({ message: 'Autor atualizado com sucesso', updatedAuthor });
     } catch (error) {
-        next(new Error('Erro interno ao editar autor'));
+        next(new Error('Erro interno ao editar Autor'));
     }
 
 };
@@ -116,7 +116,7 @@ module.exports.deleteAuthor = async (req, res, next) => {
         const existingAuthor = await Author.findOne({ id: authorId });
 
         if (!existingAuthor) {
-            return res.status(404).json({ error: 'Estante não encontrada' });
+            return res.status(404).json({ error: 'Autor não encontrado' });
         }
 
         Author.deleteById(authorId)

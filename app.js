@@ -2,8 +2,6 @@ require('dotenv').config()
 
 const express = require('express');
 
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const path = require('path');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
@@ -32,7 +30,7 @@ app.get('/', (req, res) => {
     res.send('routes: /customers, /authors, /bookshelves, /books, /rents, /register, /login');
 });
 
-// rotas crud
+// rotas CRUD
 
 app.use('/customers', customersRoutes);
 app.use('/authors', authorsRoutes);
@@ -41,11 +39,6 @@ app.use('/books', booksRoutes);
 app.use('/rents', rentsRoutes);
 app.use('/users', usersRoutes);
 app.use('/details', userDetailsRoutes);
-
-// rotas login
-
-app.post('/register', UserController.createUser);
-// app.post('/login', UserController.);
 
 const PORT = process.env.APPPORT;
 app.listen(PORT, () => {

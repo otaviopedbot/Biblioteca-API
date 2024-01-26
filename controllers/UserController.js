@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // visualizações:
 
@@ -32,9 +34,43 @@ module.exports.showUser = (req, res) => {
 
 //login / loggout
 
-module.exports.login = (req, res) => {
+module.exports.login = async (req, res) => {
+    const { email, password } = req.body;
 
+    if (!email || !password) {
+        return res.status(422).json({ message: 'Preencha todos os campos' });
+    }
 
+    // verifica se o usuario existe
+
+    const user = await User.findOne({email: email})
+
+    if(!user){
+        return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    // verifica se a senha é correta
+
+    const checkPassword = await bcrypt.compare(password, user.password)
+
+    if(!checkPassword){
+        return res.status(422).json({ message: 'Senha incorreta' });
+    }
+
+    try{
+        const secret = process.env.SECRET
+
+        const token = jwt.sign(
+            {
+                id: user.id
+            },
+            secret,
+        )
+        res.status(200).json({message:"Autenticação realizada com sucesso", token})
+
+    }catch{
+        next(new Error('Erro interno ao logar Usuário'));
+    }
 
 };
 
@@ -49,40 +85,49 @@ module.exports.logout = (req, res) => {
 module.exports.createUser = async (req, res, next) => {
     let { username, email, password } = req.body;
 
+    if (!username || !email || !password) {
+        return res.status(422).json({ message: 'Preencha todos os campos' });
+    }
+
+    username = username.trim();
+    email = email.trim();
+    password = password.trim();
+
+    if (username === '' || email === '' || password === '') {
+        return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
+    }
+
+    // Verifica se o usuário existe
+
+    const usernameExists = await User.findOne({ username: username });
+    const emailExists = await User.findOne({ email: email });
+
+    if (usernameExists) {
+        return res.status(422).json({ message: 'Nome de usuário já cadastrado' });
+    }
+
+    if (emailExists) {
+        return res.status(422).json({ message: 'E-mail já cadastrado' });
+    }
+
+    // Cria senha
+
+    const salt = await bcrypt.genSalt(12)
+    const passwordHash = await bcrypt.hash(password, salt)
+
+    // Cria o usuário
+
+    const user = new User({
+        username,
+        email,
+        password: passwordHash,
+    });
+
     try {
 
-        if (!username || !email || !password) {
-            return res.status(422).json({ message: 'Preencha todos os campos' });
-        }
+        await user.save()
 
-        username = username.trim();
-        email = email.trim();
-        password = password.trim();
-
-        if (username === '' || email === '' || password === '') {
-            return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
-        }
-
-        // Verifica se o usuário existe
-
-        const usernameExists = await User.findOne({ username: username });
-        const emailExists = await User.findOne({ email: email });
-
-        if (usernameExists) {
-            return res.status(422).json({ message: 'Nome de usuário já cadastrado' });
-        }
-
-        if (emailExists) {
-            return res.status(422).json({ message: 'E-mail já cadastrado' });
-        }
-
-        // Salva o usuário
-
-        const newUser = new User({ username, email, password });
-
-        const savedUser = await newUser.save();
-
-        res.json({ message: 'Usuário criado com sucesso', savedUser });
+        res.status(201).json({ message: 'Usuário criado com sucesso' });
     } catch (error) {
         next(new Error('Erro interno ao criar Usuário'));
     }

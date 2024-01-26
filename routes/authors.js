@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const AuthorController = require('../controllers/AuthorController');
+const checkToken = require('../middlewares/checkToken')
 
 router.route('/')
     .get(AuthorController.index)
@@ -9,6 +10,6 @@ router.route('/')
 router.route('/:id')
     .put(AuthorController.editAuthor)
     .get(AuthorController.showAuthor)
-    .delete(AuthorController.deleteAuthor)
+    .delete(checkToken, AuthorController.deleteAuthor)
 
 module.exports = router;
