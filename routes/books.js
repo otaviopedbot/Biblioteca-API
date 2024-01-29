@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const BookController = require('../controllers/BookController');
+const checkToken = require('../middlewares/checkToken')
 
 router.route('/')
-    .get(BookController.index)
-    .post(BookController.createBook)
+    .get(checkToken, BookController.index)
+    .post(checkToken, BookController.createBook)
 
 router.route('/:id')
-    .put(BookController.editBook)
-    .get(BookController.showBook)
-    .delete(BookController.deleteBook)
+    .put(checkToken, BookController.editBook)
+    .get(checkToken, BookController.showBook)
+    .delete(checkToken, BookController.deleteBook)
 
 module.exports = router;

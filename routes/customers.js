@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const CustomerController = require('../controllers/CustomerController');
+const checkToken = require('../middlewares/checkToken')
 
 router.route('/')
-    .get(CustomerController.index)
-    .post(CustomerController.createCustomer)
+    .get(checkToken, CustomerController.index)
+    .post(checkToken, CustomerController.createCustomer)
 
 router.route('/:id')
-    .put(CustomerController.editCustomer)
-    .get(CustomerController.showCustomer)
-    .delete(CustomerController.deleteCustomer)
+    .put(checkToken, CustomerController.editCustomer)
+    .get(checkToken, CustomerController.showCustomer)
+    .delete(checkToken, CustomerController.deleteCustomer)
 
 module.exports = router;
