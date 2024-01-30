@@ -46,7 +46,7 @@ module.exports.login = async (req, res) => {
     const user = await User.findOne({email: email})
 
     if(!user){
-        return res.status(404).json({ message: 'Usuário não encontrado' });
+        return res.status(404).json({ message: 'E-mail não cadastrado' });
     }
 
     // verifica se a senha é correta
@@ -66,7 +66,7 @@ module.exports.login = async (req, res) => {
             },
             secret,
         )
-        res.status(200).json({message:"Autenticação realizada com sucesso", token})
+        res.status(200).json({message:"Autenticação realizada com sucesso", token, user})
 
     }catch{
         next(new Error('Erro interno ao logar Usuário'));

@@ -14,7 +14,6 @@ const bookshelvesRoutes = require('./routes/bookshelves')
 const booksRoutes = require('./routes/books')
 const rentsRoutes = require('./routes/rents')
 const usersRoutes = require('./routes/users')
-const userDetailsRoutes = require('./routes/userDetails')
 
 const app = express();
 const cors = require('cors');
@@ -38,7 +37,6 @@ app.use('/bookshelves', bookshelvesRoutes);
 app.use('/books', booksRoutes);
 app.use('/rents', rentsRoutes);
 app.use('/users', usersRoutes);
-app.use('/details', userDetailsRoutes);
 
 const PORT = process.env.APPPORT;
 app.listen(PORT, () => {
