@@ -4,12 +4,12 @@ const AuthorController = require('../controllers/AuthorController');
 const checkToken = require('../middlewares/checkToken')
 
 router.route('/')
-    .get(AuthorController.index)
-    .post(AuthorController.createAuthor)
+    .get(checkToken, AuthorController.index)
+    .post(checkToken, AuthorController.createAuthor)
 
 router.route('/:id')
-    .put(AuthorController.editAuthor)
-    .get(AuthorController.showAuthor)
+    .put(checkToken, AuthorController.editAuthor)
+    .get(checkToken, AuthorController.showAuthor)
     .delete(checkToken, AuthorController.deleteAuthor)
 
 module.exports = router;

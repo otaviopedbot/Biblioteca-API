@@ -1,16 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/UserController');
+const checkToken = require('../middlewares/checkToken')
 
 router.route('/login')
-    .get(UserController.login)
+    .post(UserController.login)
 
 router.route('/register')
-    .get(UserController.createUser)
+    .post(UserController.createUser)
+
+router.route('/')
+    .get(UserController.index)
 
 router.route('/:id')
-    .put(UserController.editUser)
-    .get(UserController.showUser)
-    .delete(UserController.deleteUser)
+    .put(checkToken, UserController.editUser)
+    .get(checkToken, UserController.showUser)
+    .delete(checkToken, UserController.deleteUser)
 
 module.exports = router;
