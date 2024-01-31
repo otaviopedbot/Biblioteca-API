@@ -74,7 +74,7 @@ module.exports.editAuthor = async (req, res, next) => {
         const existingAuthor = await Author.findOne({ id: authorId });
 
         if (!existingAuthor) {
-            return res.status(404).json({ error: 'Autor não encontrado' });
+            return res.status(404).json({ message: 'Autor não encontrado' });
         }
 
         if (!name) {
@@ -116,7 +116,13 @@ module.exports.deleteAuthor = async (req, res, next) => {
         const existingAuthor = await Author.findOne({ id: authorId });
 
         if (!existingAuthor) {
-            return res.status(404).json({ error: 'Autor não encontrado' });
+            return res.status(404).json({ message: 'Autor não encontrado' });
+        }
+
+        const hasReferences = await Author.hasReferences('books', 'author_id', authorId);
+
+        if (hasReferences) {
+            return res.status(400).json({ message: 'Não é possível excluir o autor, pois há livros associados a ele.' });
         }
 
         Author.deleteById(authorId)

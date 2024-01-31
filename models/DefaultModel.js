@@ -57,6 +57,20 @@ class DefaultModel {
             });
         });
     }
+
+    static hasReferences(from, where, id) {
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT COUNT(*) AS count FROM ${from} WHERE ${where} = ?`,[id], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const rowCount = result[0].count;
+                    resolve(rowCount > 0);
+                }
+            });
+        });
+    }
+    
 }
 
 module.exports = DefaultModel;

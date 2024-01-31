@@ -118,6 +118,12 @@ module.exports.deleteCustomer = async (req, res, next) => {
             return res.status(404).json({ error: 'Cliente não encontrado' });
         }
 
+        const hasReferences = await Customer.hasReferences('rents', 'customer_id', CustomerId);
+
+        if (hasReferences) {
+            return res.status(400).json({ error: 'Não é possível excluir o Cliente, pois há Aluguéis associados a ele.' });
+        }
+
         Customer.deleteById(CustomerId)
 
         res.json({ message: 'Cliente excluido com sucesso' });

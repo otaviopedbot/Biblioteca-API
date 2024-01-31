@@ -146,6 +146,12 @@ module.exports.deleteBook = async (req, res, next) => {
             return res.status(404).json({ error: 'Livro não encontrado' });
         }
 
+        const hasReferences = await Book.hasReferences('rents', 'book_id', bookId);
+
+        if (hasReferences) {
+            return res.status(400).json({ error: 'Não é possível excluir o Livro, pois há Aluguéis associados a ele.' });
+        }
+
         Book.deleteById(bookId)
 
         res.json({ message: 'Livro excluido com sucesso' });

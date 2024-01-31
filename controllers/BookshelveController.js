@@ -119,6 +119,12 @@ module.exports.deleteBookshelve = async (req, res, next) => {
             return res.status(404).json({ error: 'Estante não encontrada' });
         }
 
+        const hasReferences = await Bookshelve.hasReferences('books', 'bookshelve_id', bookshelveId);
+
+        if (hasReferences) {
+            return res.status(400).json({ error: 'Não é possível excluir a estante, pois há livros associados a ela.' });
+        }
+
         Bookshelve.deleteById(bookshelveId)
 
         res.json({ message: 'Estante excluida com sucesso' });
