@@ -2,7 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// visualizações:
+visualizações:
 
 module.exports.index = (req, res) => {
 
@@ -32,7 +32,7 @@ module.exports.showUser = (req, res) => {
 
 };
 
-//login / loggout
+//login
 
 module.exports.login = async (req, res) => {
     const { email, password } = req.body;
@@ -43,9 +43,9 @@ module.exports.login = async (req, res) => {
 
     // verifica se o usuario existe
 
-    const user = await User.findOne({email: email})
+    const user = await User.findOne({ email: email })
 
-    if(!user){
+    if (!user) {
         return res.status(404).json({ message: 'E-mail não cadastrado' });
     }
 
@@ -53,34 +53,42 @@ module.exports.login = async (req, res) => {
 
     const checkPassword = await bcrypt.compare(password, user.password)
 
-    if(!checkPassword){
+    if (!checkPassword) {
         return res.status(422).json({ message: 'Senha incorreta' });
     }
 
-    try{
-        const secret = process.env.SECRET
+    const secret = process.env.SECRET
+    const expiresIn = '1h'
 
+    try {
+        
         const token = jwt.sign(
             {
                 id: user.id
             },
             secret,
+            {
+                expiresIn
+            },
+            
         )
-        res.status(200).json({message:"Autenticação realizada com sucesso", token, user})
+        res.status(200).json({ message: "Autenticação realizada com sucesso", token, user })
 
-    }catch{
+    } catch {
         next(new Error('Erro interno ao logar Usuário'));
     }
 
 };
 
-module.exports.logout = (req, res) => {
+// loggout
+
+// module.exports.logout = (req, res) => {
 
 
 
-};
+// };
 
-// operações:
+operações:
 
 module.exports.createUser = async (req, res, next) => {
     let { username, email, password } = req.body;
@@ -134,14 +142,21 @@ module.exports.createUser = async (req, res, next) => {
 };
 
 module.exports.editUser = async (req, res, next) => {
+
+    console.log(req.user.id)
+
     const userId = req.params.id;
-    let { username, email, password } = req.body
+    let { username, email, password, image, details } = req.body
 
     try {
         const existingUser = await User.findOne({ id: userId });
 
+        if (userId != req.user.id ) {
+            return res.status(404).json({ message: 'Você não pode editar este Usuário' });
+        }
+
         if (!existingUser) {
-            return res.status(404).json({ error: 'Usuário não encontrado' });
+            return res.status(404).json({ message: 'Usuário não encontrado' });
         }
 
         if (!username || !email || !password) {
@@ -151,6 +166,8 @@ module.exports.editUser = async (req, res, next) => {
         username = username.trim();
         email = email.trim();
         password = password.trim();
+        image = image.trim();
+        details = details.trim();
 
         // Verifica se os dados do usuário já existem
 
@@ -165,15 +182,21 @@ module.exports.editUser = async (req, res, next) => {
             return res.status(422).json({ message: 'E-mail já cadastrado' });
         }
 
+        // Cria senha
+
+        const salt = await bcrypt.genSalt(12)
+        password = await bcrypt.hash(password, salt)
+
         // atualiza usuario
 
-        const updatedUser = new User({ username, email, password });
+        const updatedUser = new User({ username, email, password, image, details });
         updatedUser.id = userId;
 
         await updatedUser.update();
 
         res.json({ message: 'Usuário atualizado com sucesso', updatedUser });
     } catch (error) {
+        console.log(error)
         next(new Error('Erro interno ao editar Usuário'));
     }
 

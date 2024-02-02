@@ -2,10 +2,12 @@ const DefaultModel = require('./DefaultModel')
 const db = require('../database/db');
 
 class User extends DefaultModel {
-    constructor({ username, email, password }) {
+    constructor({ username, email, image, details, password }) {
         super();
         this.username = username;
         this.email = email;
+        this.image = image;
+        this.details = details;
         this.password = password;
     }
 
@@ -26,7 +28,7 @@ class User extends DefaultModel {
 
     update() {
         return new Promise((resolve, reject) => {
-            db.query('UPDATE users SET username = ?, email = ?, password =? WHERE id = ?', [this.username, this.email, this.password, this.id], (err) => {
+            db.query('UPDATE users SET username = ?, email = ?, password = ?, image = ?, details = ? WHERE id = ?', [this.username, this.email, this.password, this.image, this.details, this.id], (err) => {
                 if (err) {
                     reject(err);
                 } else {
