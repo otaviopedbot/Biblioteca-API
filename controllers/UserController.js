@@ -32,6 +32,24 @@ module.exports.showUser = (req, res) => {
 
 };
 
+module.exports.showUserByUsername = async (req, res) => {
+    const username = req.params.username;
+
+    const user = await User.findOne({ username: username })
+    try {
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        return res.json(user);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Erro interno ao obter Usuário pelo username', error: error });
+    };
+
+};
+
 //login
 
 module.exports.login = async (req, res) => {
@@ -61,7 +79,7 @@ module.exports.login = async (req, res) => {
     const expiresIn = '1h'
 
     try {
-        
+
         const token = jwt.sign(
             {
                 id: user.id
@@ -70,7 +88,7 @@ module.exports.login = async (req, res) => {
             {
                 expiresIn
             },
-            
+
         )
         res.status(200).json({ message: "Autenticação realizada com sucesso", token, user })
 
@@ -80,15 +98,7 @@ module.exports.login = async (req, res) => {
 
 };
 
-// loggout
-
-// module.exports.logout = (req, res) => {
-
-
-
-// };
-
-operações:
+//operações:
 
 module.exports.createUser = async (req, res, next) => {
     let { username, email, password } = req.body;
@@ -151,7 +161,7 @@ module.exports.editUser = async (req, res, next) => {
     try {
         const existingUser = await User.findOne({ id: userId });
 
-        if (userId != req.user.id ) {
+        if (userId != req.user.id) {
             return res.status(404).json({ message: 'Você não pode editar este Usuário' });
         }
 

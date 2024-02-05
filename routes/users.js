@@ -14,6 +14,9 @@ router.route('/:id')
     .get(checkToken, UserController.showUser)
     .delete(checkToken, UserController.deleteUser)
 
+router.route('/search/:username')
+    .get(UserController.showUserByUsername)
+
 router.route('/')
     .get(checkToken, UserController.index)
 
