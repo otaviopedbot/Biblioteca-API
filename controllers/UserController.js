@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Favorite = require('../models/Favorite');
+const Book = require('../models/Book');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -227,6 +229,168 @@ module.exports.deleteUser = async (req, res, next) => {
         res.json({ message: 'Usuário excluido com sucesso' });
     } catch (error) {
         next(new Error('Erro interno ao excluir Usuário'));
+    }
+
+};
+
+// funções de Livros favoritos
+
+module.exports.showUserFavorites = async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+        // Obter o usuário pelo ID
+        const user = await User.getById(userId);
+
+        // Verificar se o usuário existe
+        if (!user) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+
+        // Encontrar os favoritos do usuário pelo ID do usuário
+        const favorites = await Favorite.find({ user_id: userId });
+
+        // Verificar se o usuário possui favoritos
+        if (!favorites || favorites.length === 0) {
+            return res.status(404).json({ message: 'Usuário ainda não possui livros favoritos' });
+        }
+
+        // Retornar os favoritos do usuário
+        return res.json(favorites);
+
+    } catch (error) {
+        // Lidar com erros internos
+        res.status(500).json({ message: 'Erro interno ao obter Favoritos do Usuário por ID', error: error });
+    }
+};
+
+module.exports.createFavorite = async (req, res, next) => {
+
+    const userId = req.params.id
+    const { book_id } = req.body;
+
+    if (!book_id || book_id <= 0) {
+        return res.status(422).json({ message: 'Preencha todos os campos com valores válidos' });
+    }
+
+    // Verifica se o usuário existe
+
+    const userExists = await User.getById(userId);
+
+    if (!userExists || Object.keys(userExists).length === 0) {
+        return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    // Verifica se o livro existe
+
+    const bookExists = await Book.getById(book_id);
+
+    if (!bookExists || Object.keys(bookExists).length === 0) {
+        return res.status(404).json({ message: 'Livro não encontrado' });
+    }
+
+    // Verifica se o livro já foi favoritado pelo usuario
+
+    const favoritedBook = await Favorite.findOne({ user_id: userId, book_id: book_id });
+
+    if (favoritedBook) {
+        return res.status(404).json({ message: 'Livro já favoritado' });
+    }
+
+    // Verifica se o usuario já possui 3 livros favoritos
+
+    const favoritedBooksLimit = await Favorite.find({ user_id: userId });
+
+    if (favoritedBooksLimit.length == 3) {
+        return res.status(404).json({ message: 'Limite de favoritos atingido pelo usuário' });
+    }
+
+    // Cria o favorito
+
+    const favorite = new Favorite({
+        user_id: userId,
+        book_id: book_id,
+    });
+
+    try {
+        await favorite.save()
+
+        res.status(201).json({ message: 'Livro favoritado com sucesso' });
+    } catch (error) {
+        next(new Error('Erro interno ao favoritar livro' + error));
+    }
+};
+
+module.exports.editFavorite = async (req, res, next) => {
+
+    const userId = req.params.id;
+    const { book_id } = req.body
+    const { favorite_id } = req.body
+
+    // verifica os campos foram preenchidos
+
+    if (!book_id || book_id <= 0) {
+        return res.status(422).json({ message: 'Preencha todos os campos com valores válidos' });
+    }
+
+    // verifica se o usuario existe
+
+    const userExists = await User.getById(userId);
+
+    if (!userExists || Object.keys(userExists).length === 0) {
+        return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    // verifica se o livro existe
+
+    const bookExists = await Book.getById(book_id);
+
+    if (!bookExists || Object.keys(bookExists).length === 0) {
+        return res.status(404).json({ message: 'Livro não encontrado' });
+    }
+
+    // Verifica se o livro favoritado já existe
+
+    const favoriteExists = await Favorite.findOne({ user_id: userId, book_id: book_id, id:favorite_id });
+
+    if (favoriteExists) {
+        return res.status(404).json({ message: 'Livro já favoritado' });
+    }
+
+    // atualiza favoritos
+
+    const updatedFavorite = new Favorite({ user_id: userId, book_id });
+    updatedFavorite.id = favorite_id;
+    console.log(userId+" id do usuario aqui kkkkkkk")
+    console.log(updatedFavorite)
+
+    try {
+
+        await updatedFavorite.update();
+
+        res.json({ message: 'Favoritos atualizados com sucesso', updatedFavorite });
+    } catch (error) {
+        console.log(error)
+        next(new Error('Erro interno ao editar Favoritos'));
+    }
+
+};
+
+module.exports.deleteFavorite = async (req, res, next) => {
+    const favoriteId = req.params.id
+
+    try {
+        const existingFavorite = await Favorite.findOne({ id: favoriteId });
+
+        if (!existingFavorite) {
+            return res.status(404).json({ error: 'Favorito não encontrado' });
+        }
+
+        User.deleteById(favoriteId)
+
+        res.json({ message: 'Favorito excluido com sucesso' });
+    } catch (error) {
+        next(new Error('Erro interno ao excluir Favorito'));
     }
 
 };

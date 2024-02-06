@@ -3,21 +3,29 @@ const router = express.Router();
 const UserController = require('../controllers/UserController');
 const checkToken = require('../middlewares/checkToken')
 
-router.route('/login')
-    .post(UserController.login)
 
-router.route('/register')
-    .post(UserController.createUser)
+// Rotas para autenticação
+router.post('/login', UserController.login);
+router.post('/register', UserController.createUser);
 
+// Rotas para operações do usuário
 router.route('/:id')
-    .put(checkToken, UserController.editUser)
     .get(checkToken, UserController.showUser)
-    .delete(checkToken, UserController.deleteUser)
+    .put(checkToken, UserController.editUser)
+    .delete(checkToken, UserController.deleteUser);
 
-router.route('/search/:username')
-    .get(UserController.showUserByUsername)
+// Rotas para favoritos do usuário
+router.route('/:id/favorites')
+    .post(UserController.createFavorite)
+    .get(UserController.showUserFavorites);
 
-router.route('/')
-    .get(checkToken, UserController.index)
+router.route('/:id/favorites/:favoriteId')
+    .put(UserController.editFavorite)
+    .delete(UserController.deleteFavorite);
+
+// Rota para buscar usuário por nome de usuário
+router.get('/search/:username', UserController.showUserByUsername);
+
+router.get('/', checkToken, UserController.index);
 
 module.exports = router;

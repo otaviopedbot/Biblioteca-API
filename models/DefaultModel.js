@@ -31,9 +31,9 @@ class DefaultModel {
     static findOne(criteria) {
         const columns = Object.keys(criteria);
         const values = Object.values(criteria);
-    
+
         const conditions = columns.map(column => `${column} = ?`).join(' AND ');
-    
+
         return new Promise((resolve, reject) => {
             const query = `SELECT * FROM ${this.modelName} WHERE ${conditions} LIMIT 1`;
             db.query(query, values, (err, result) => {
@@ -44,7 +44,25 @@ class DefaultModel {
                 }
             });
         });
-    }    
+    }
+
+    static find(criteria) {
+        const columns = Object.keys(criteria);
+        const values = Object.values(criteria);
+
+        const conditions = columns.map(column => `${column} = ?`).join(' AND ');
+
+        return new Promise((resolve, reject) => {
+            const query = `SELECT * FROM ${this.modelName} WHERE ${conditions}`;
+            db.query(query, values, (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    }
 
     static deleteById(id) {
         return new Promise((resolve, reject) => {
@@ -60,7 +78,7 @@ class DefaultModel {
 
     static hasReferences(from, where, id) {
         return new Promise((resolve, reject) => {
-            db.query(`SELECT COUNT(*) AS count FROM ${from} WHERE ${where} = ?`,[id], (err, result) => {
+            db.query(`SELECT COUNT(*) AS count FROM ${from} WHERE ${where} = ?`, [id], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -70,7 +88,7 @@ class DefaultModel {
             });
         });
     }
-    
+
 }
 
 module.exports = DefaultModel;
