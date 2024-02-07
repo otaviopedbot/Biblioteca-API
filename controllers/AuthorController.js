@@ -20,7 +20,7 @@ module.exports.showAuthor = (req, res) => {
     Author.getById(authorId)
         .then(author => {
             if (author.length > 0) {
-                return res.json(author);
+                return res.json(author[0]);
             }
             return res.status(404).json({ message: 'Autor não encontrado' });
         })

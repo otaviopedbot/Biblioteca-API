@@ -22,7 +22,7 @@ module.exports.showRent = (req, res) => {
     Rent.getById(rentsId)
         .then(rent => {
             if (rent.length > 0) {
-                return res.json(rent);
+                return res.json(rent[0]);
             }
             return res.status(404).json({ message: 'Aluguel não encontrado' });
         })

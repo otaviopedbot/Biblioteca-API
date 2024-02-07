@@ -15,7 +15,7 @@ class User extends DefaultModel {
 
     save() {
         return new Promise((resolve, reject) => {
-            db.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [this.username, this.email, this.password], (err, results) => {
+            db.query('INSERT INTO users (username, email, password, image, details) VALUES (?, ?, ?, "", "")', [this.username, this.email, this.password], (err, results) => {
                 if (err) {
                     reject(err);
                 } else {

@@ -22,14 +22,13 @@ module.exports.showBook = (req, res) => {
     Book.getById(bookId)
         .then(book => {
             if (book.length > 0) {
-                return res.json(book);
+                return res.json(book[0]);
             }
             return res.status(404).json({ message: 'Livro não encontrado' });
         })
         .catch(error => {
             res.status(500).json({ message: 'Erro interno ao obter livro por ID', error: error });
         });
-
 };
 
 // operações:

@@ -4,12 +4,12 @@ const BookController = require('../controllers/BookController');
 const checkToken = require('../middlewares/checkToken')
 
 router.route('/')
-    .get(checkToken, BookController.index)
-    .post(checkToken, BookController.createBook)
+    .get(BookController.index)
+    .post(BookController.createBook)
 
 router.route('/:id')
-    .put(checkToken, BookController.editBook)
-    .get(checkToken, BookController.showBook)
-    .delete(checkToken, BookController.deleteBook)
+    .put(BookController.editBook)
+    .get(BookController.showBook)
+    .delete(BookController.deleteBook)
 
 module.exports = router;

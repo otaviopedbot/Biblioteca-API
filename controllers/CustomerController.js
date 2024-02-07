@@ -20,7 +20,7 @@ module.exports.showCustomer = (req, res) => {
     Customer.getById(customerId)
         .then(customer => {
             if (customer.length > 0) {
-                return res.json(customer);
+                return res.json(customer[0]);
             }
             return res.status(404).json({ message: 'Cliente não encontrado' });
         })

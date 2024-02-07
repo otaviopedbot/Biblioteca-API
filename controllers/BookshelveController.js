@@ -20,7 +20,7 @@ module.exports.showBookshelve = (req, res) => {
     Bookshelve.getById(bookshelveId)
         .then(bookshelve => {
             if (bookshelve.length > 0) {
-                return res.json(bookshelve);
+                return res.json(bookshelve[0]);
             }
             return res.status(404).json({ message: 'Estante não encontrada' });
         })

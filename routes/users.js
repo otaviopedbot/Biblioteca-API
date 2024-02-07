@@ -3,7 +3,6 @@ const router = express.Router();
 const UserController = require('../controllers/UserController');
 const checkToken = require('../middlewares/checkToken')
 
-
 // Rotas para autenticação
 router.post('/login', UserController.login);
 router.post('/register', UserController.createUser);
