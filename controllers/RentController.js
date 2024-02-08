@@ -4,31 +4,69 @@ const Customer = require('../models/Customer');
 
 // visualizações:
 
-module.exports.index = (req, res) => {
+module.exports.index = async (req, res, next) => {
+    try {
+        // Recuperar todos os aluguéis
+        const rents = await Rent.getAll();
 
-    Rent.getAll()
-        .then(results => {
-            res.json(results);
-        })
-        .catch(error => {
-            res.json({ 'message': 'Erro interno ao obter Aluguéis', error: error });
+        // Mapear todos os aluguéis em um array de promessas
+        const rentPromises = rents.map(async (rent) => {
+            // Recuperar o livro associado ao aluguel
+            const book = await Book.getById(rent.book_id);
+            // Recuperar o cliente associado ao aluguel
+            const customer = await Customer.getById(rent.customer_id);
+            // Construir o objeto de resultado para o aluguel
+            return {
+                id: rent.id,
+                date: rent.date,
+                book_id: book[0].id,
+                book_title: book[0].title,
+                customer_id: customer[0].id,
+                customer_name: customer[0].name
+            };
         });
 
+        // Aguardar a resolução de todas as promessas
+        const rentDetails = await Promise.all(rentPromises);
+
+        // Retorna os detalhes de todos os aluguéis em um array json
+        res.json(rentDetails);
+    } catch (error) {
+        next(new Error('Erro interno ao buscar alugueis'));
+    }
 };
 
-module.exports.showRent = (req, res) => {
+module.exports.showRent = async (req, res, next) => {
     const rentsId = req.params.id;
 
-    Rent.getById(rentsId)
-        .then(rent => {
-            if (rent.length > 0) {
-                return res.json(rent[0]);
-            }
+    try {
+
+        const rent = await Rent.getById(rentsId)
+
+        if (rent.length < 0) {
             return res.status(404).json({ message: 'Aluguel não encontrado' });
-        })
-        .catch(error => {
-            res.status(500).json({ message: 'Erro interno ao obter Aluguel por ID', error: error });
-        });
+        }
+
+        // busca o cliente e o livro
+
+        const book = await Book.getById(rent[0].book_id)
+
+        console.log(book[0].title)
+
+        const customer = await Customer.getById(rent[0].customer_id)
+
+        const result = {
+            id: rent[0].id,
+            date: rent[0].date,
+            book: book[0],
+            customer: customer[0]
+        }
+
+        res.json(result)
+
+    } catch {
+        next(new Error('Erro interno ao buscar Aluguel'));
+    }
 
 };
 
@@ -58,9 +96,9 @@ module.exports.createRent = async (req, res, next) => {
 
         // Verifica se o cliente já alugou o mesmo livro
 
-        rentExists = await Rent.findOne({ customer_id:customer_id, book_id:book_id });
+        rentExists = await Rent.findOne({ customer_id: customer_id, book_id: book_id });
 
-        if(rentExists){
+        if (rentExists) {
             return res.status(422).json({ message: 'Cliente já alugou este livro' });
         }
 
@@ -111,9 +149,9 @@ module.exports.editRent = async (req, res, next) => {
 
         // Verifica se o cliente já alugou o mesmo livro
 
-        const rentBookExists = await Rent.findOne({ customer_id:customer_id, book_id:book_id });
+        const rentBookExists = await Rent.findOne({ customer_id: customer_id, book_id: book_id });
 
-        if(rentBookExists && rentBookExists.id != rentId){
+        if (rentBookExists && rentBookExists.id != rentId) {
             return res.status(422).json({ message: 'Cliente já alugou este livro' });
         }
 

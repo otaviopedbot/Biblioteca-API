@@ -4,12 +4,12 @@ const BookshelveController = require('../controllers/BookshelveController');
 const checkToken = require('../middlewares/checkToken')
 
 router.route('/')
-    .get(checkToken, BookshelveController.index)
-    .post(checkToken, BookshelveController.createBookshelve)
+    .get(BookshelveController.index)
+    .post(BookshelveController.createBookshelve)
 
 router.route('/:id')
-    .put(checkToken, BookshelveController.editBookshelve)
-    .get(checkToken, BookshelveController.showBookshelve)
-    .delete(checkToken, BookshelveController.deleteBookshelve)
+    .put(BookshelveController.editBookshelve)
+    .get(BookshelveController.showBookshelve)
+    .delete(BookshelveController.deleteBookshelve)
 
 module.exports = router;

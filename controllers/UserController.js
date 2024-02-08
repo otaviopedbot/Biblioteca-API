@@ -57,6 +57,8 @@ visualizações:
 
 module.exports.index = (req, res) => {
 
+    console.log(req.user)
+
     User.getAll()
         .then(results => {
             res.json(results);
@@ -270,7 +272,7 @@ module.exports.showUserFavorites = async (req, res) => {
         // Mapear todas as chamadas de Book.getById() em um array de promessas
         const bookPromises = favorites.map(async (item) => {
             const book = await Book.getById(item.book_id);
-            return book[0];
+            return { book: book[0], favorite_id: item.id }; // Incluir o ID do favorito no objeto retornado
         });
 
         // Aguardar a resolução de todas as promessas
@@ -283,7 +285,6 @@ module.exports.showUserFavorites = async (req, res) => {
         res.status(500).json({ message: 'Erro interno ao obter Favoritos do Usuário por ID', error: error });
     }
 };
-
 
 module.exports.createFavorite = async (req, res, next) => {
 

@@ -4,12 +4,12 @@ const RentController = require('../controllers/RentController');
 const checkToken = require('../middlewares/checkToken')
 
 router.route('/')
-    .get(checkToken, RentController.index)
-    .post(checkToken, RentController.createRent)
+    .get(RentController.index)
+    .post(RentController.createRent)
 
 router.route('/:id')
-    .put(checkToken, RentController.editRent)
-    .get(checkToken, RentController.showRent)
-    .delete(checkToken, RentController.deleteRent)
+    .put(RentController.editRent)
+    .get(RentController.showRent)
+    .delete(RentController.deleteRent)
 
 module.exports = router;
