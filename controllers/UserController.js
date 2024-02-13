@@ -4,7 +4,6 @@ const Book = require('../models/Book');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-
 //login
 
 module.exports.login = async (req, res) => {
@@ -245,7 +244,6 @@ module.exports.deleteUser = async (req, res, next) => {
     }
 
 };
-
 
 // funções de Livros favoritos
 
