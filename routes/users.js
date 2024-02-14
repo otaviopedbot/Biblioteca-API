@@ -15,7 +15,7 @@ router.route('/:id')
     .delete(checkToken, UserController.deleteUser);
 
 // Rotas para favoritos do usuário
-router.route(checkToken, '/:id/favorites')
+router.route('/:id/favorites')
     .post(checkToken, UserController.createFavorite)
     .get(checkToken, UserController.showUserFavorites);
 
