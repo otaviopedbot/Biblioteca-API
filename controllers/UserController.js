@@ -30,7 +30,7 @@ module.exports.login = async (req, res) => {
     }
 
     const secret = process.env.SECRET
-    const expiresIn = '1h'
+    // const expiresIn = '1h'
 
     try {
 
@@ -39,9 +39,9 @@ module.exports.login = async (req, res) => {
                 id: user.id
             },
             secret,
-            {
-                expiresIn
-            },
+            // {
+            //     expiresIn
+            // },
 
         )
         res.status(200).json({ message: "Autenticação realizada com sucesso", token, user })
@@ -160,7 +160,7 @@ module.exports.editUser = async (req, res, next) => {
     const userId = req.params.id;
     let { username, email, password, image, details } = req.body
 
-    const existingUser = await User.findOne({id: userId});
+    const existingUser = await User.findOne({ id: userId });
 
     if (userId != req.user.id) {
         return res.status(404).json({ message: 'Você não pode editar este Usuário' });
@@ -264,7 +264,7 @@ module.exports.showUserFavorites = async (req, res) => {
 
         // Verificar se o usuário possui favoritos
         if (!favorites || favorites.length === 0) {
-            return res.status(404).json({ message: 'Usuário ainda não possui livros favoritos' });
+            return res.status(202).json({ message: 'Usuário ainda não possui livros favoritos' });
         }
 
         // Mapear todas as chamadas de Book.getById() em um array de promessas

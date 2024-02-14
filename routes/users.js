@@ -10,13 +10,13 @@ router.post('/register', UserController.createUser);
 
 // Rotas para operações do usuário
 router.route('/:id')
-    .get(UserController.showUser)
+    .get(checkToken, UserController.showUser)
     .put(checkToken, UserController.editUser)
     .delete(checkToken, UserController.deleteUser);
 
 // Rotas para favoritos do usuário
-router.route('/:id/favorites')
-    .post(UserController.createFavorite)
+router.route(checkToken, '/:id/favorites')
+    .post(checkToken, UserController.createFavorite)
     .get(checkToken, UserController.showUserFavorites);
 
 router.route('/:id/favorites/:favoriteId')
@@ -26,6 +26,6 @@ router.route('/:id/favorites/:favoriteId')
 // Rota para buscar usuário por nome de usuário
 router.get('/search/:username', UserController.showUserByUsername);
 
-router.get('/', checkTokenAdmin, UserController.index);
+router.get('/',UserController.index);
 
 module.exports = router;

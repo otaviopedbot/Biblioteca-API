@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const RentController = require('../controllers/RentController');
 const checkToken = require('../middlewares/checkToken')
+const checkTokenAdmin = require('../middlewares/checkTokenAdmin')
 
 router.route('/')
     .get(RentController.index)
