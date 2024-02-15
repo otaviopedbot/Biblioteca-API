@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/UserController');
+const FavoriteController = require('../controllers/FavoriteController');
 const  checkToken = require('../middlewares/checkToken')
 const  checkTokenAdmin = require('../middlewares/checkTokenAdmin')
 
@@ -16,12 +17,12 @@ router.route('/:id')
 
 // Rotas para favoritos do usuário
 router.route('/:id/favorites')
-    .post(checkToken, UserController.createFavorite)
-    .get(checkToken, UserController.showUserFavorites);
+    .post(checkToken, FavoriteController.createFavorite)
+    .get(checkToken, FavoriteController.showUserFavorites);
 
 router.route('/:id/favorites/:favoriteId')
-    .put(checkToken, UserController.editFavorite)
-    .delete(checkToken, UserController.deleteFavorite);
+    .put(checkToken, FavoriteController.editFavorite)
+    .delete(checkToken, FavoriteController.deleteFavorite);
 
 // Rota para buscar usuário por nome de usuário
 router.get('/search/:username', UserController.showUserByUsername);

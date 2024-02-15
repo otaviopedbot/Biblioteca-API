@@ -16,19 +16,39 @@ module.exports.index = (req, res) => {
 
 };
 
-module.exports.showBook = (req, res) => {
+module.exports.showBook = async (req, res, next) => {
     const bookId = req.params.id;
 
-    Book.getById(bookId)
-        .then(book => {
-            if (book.length > 0) {
-                return res.json(book[0]);
+        try {
+    
+            const book = await Book.getById(bookId)
+    
+            if (book.length < 0) {
+                return res.status(404).json({ message: 'Livro não encontrado' });
             }
-            return res.status(404).json({ message: 'Livro não encontrado' });
-        })
-        .catch(error => {
-            res.status(500).json({ message: 'Erro interno ao obter livro por ID', error: error });
-        });
+    
+            // busca o Autor e a estante
+    
+            const bookshelve = await Bookshelve.getById(book[0].bookshelve_id)
+    
+            const author = await Author.getById(book[0].author_id)
+    
+            const result = {
+                id: book[0].id,
+                title: book[0].title,
+                page: book[0].page,
+                quantity: book[0].quantity,
+                synopsis: book[0].synopsis,
+                author:author[0],
+                bookshelve:bookshelve[0]
+            }
+    
+            res.json(result)
+    
+        } catch {
+            next(new Error('Erro interno ao buscar Livro'));
+        }
+
 };
 
 // operações:
@@ -148,7 +168,7 @@ module.exports.deleteBook = async (req, res, next) => {
         const hasReferences = await Book.hasReferences('rents', 'book_id', bookId);
 
         if (hasReferences) {
-            return res.status(400).json({ error: 'Não é possível excluir o Livro, pois há Aluguéis associados a ele.' });
+            return res.status(400).json({ message: 'Não é possível excluir o Livro, pois há Aluguéis associados a ele.' });
         }
 
         Book.deleteById(bookId)
