@@ -73,11 +73,11 @@ module.exports.showRent = async (req, res, next) => {
 // operações:
 
 module.exports.createRent = async (req, res, next) => {
-    const { date, customer_id, book_id } = req.body;
+    const { date, book_id, customer_id } = req.body;
 
     try {
 
-        if (!customer_id || !book_id) {
+        if (!date || !customer_id || !book_id) {
             return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
         }
 
@@ -104,13 +104,12 @@ module.exports.createRent = async (req, res, next) => {
 
         // remove o livro do estoque
 
-        console.log(bookExists.quantity)
+        bookExists.quantity = bookExists.quantity - 1
 
-        const updatedBook = {
-            id: bookExists.id
-        }
+        const updatedBook = new Book(bookExists)
+        updatedBook.id = bookExists.id
 
-        updatedBook.delOne()
+        updatedBook.update()
 
         // Salva aluguel
 
@@ -182,14 +181,30 @@ module.exports.editRent = async (req, res, next) => {
 
 module.exports.deleteRent = async (req, res, next) => {
     const rentId = req.params.id
-    const customerId = req.params.customerid
 
     try {
-        const existingRent = await Rent.findOne({ id: rentId, customer_id:customerId });
+        const existingRent = await Rent.findOne({ id: rentId });
 
         if (!existingRent) {
             return res.status(404).json({ message: 'Aluguel não encontrado' });
         }
+
+        //Busca e adiciona o livro do estoque
+
+        const bookExists = await Book.findOne({ id: existingRent.book_id });
+
+        if (!bookExists) {
+            return res.status(422).json({ message: 'Livro não encontrado' });
+        }
+
+        bookExists.quantity = bookExists.quantity + 1
+
+        const updatedBook = new Book(bookExists)
+        updatedBook.id = bookExists.id
+
+        updatedBook.update()
+
+        // deleta o aluguel
 
         Rent.deleteById(rentId)
 

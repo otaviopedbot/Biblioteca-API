@@ -17,14 +17,4 @@ router.route('/:id')
     .get(CustomerController.showCustomer)
     .delete(CustomerController.deleteCustomer)
 
-// Rotas para alugueis do cliente
-
-router.route('/:id/rents')
-    .post(RentController.createRent)
-    .get(RentController.showRent)
-
-router.route('/:id/rents/:rentId')
-    .put(RentController.editRent)
-    .delete(RentController.deleteRent)
-
 module.exports = router;

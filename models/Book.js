@@ -4,12 +4,13 @@ const db = require('../database/db');
 
 class Book extends DefaultModel {
 
-    constructor({ title, page, quantity, author_id, bookshelve_id }) {
+    constructor({ title, page, quantity, author_id, bookshelve_id, synopsis }) {
         super();
         this.title = title;
         this.page = page;
         this.quantity = quantity;
         this.author_id = author_id;
+        this.synopsis = synopsis;
         this.bookshelve_id = bookshelve_id;
     }
 
@@ -17,8 +18,8 @@ class Book extends DefaultModel {
 
     save() {
         return new Promise((resolve, reject) => {
-            db.query('INSERT INTO books (title, page, quantity, author_id, bookshelve_id) VALUES (?, ?, ?, ?, ?)',
-                [this.title, this.page, this.quantity, this.author_id, this.bookshelve_id], (err, result) => {
+            db.query('INSERT INTO books (title, page, quantity, author_id, bookshelve_id, synopsis) VALUES (?, ?, ?, ?, ?, ?)',
+                [this.title, this.page, this.quantity, this.author_id, this.bookshelve_id, this.synopsis], (err, result) => {
                     if (err) {
                         reject(err);
                     } else {
@@ -31,20 +32,7 @@ class Book extends DefaultModel {
 
     update() {
         return new Promise((resolve, reject) => {
-            db.query('UPDATE books SET title = ?, page = ?, quantity = ?, author_id = ?, bookshelve_id = ?  WHERE id = ?', [this.title, this.page, this.quantity, this.author_id, this.bookshelve_id, this.id], (err) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(this);
-                }
-            });
-        });
-    }
-
-    delOne() {
-        return new Promise((resolve, reject) => {
-            // Ajustando a consulta SQL para subtrair 1 do campo quantity
-            db.query('UPDATE books SET quantity = quantity - 1  WHERE id = ?', [this.id], (err) => {
+            db.query('UPDATE books SET title = ?, page = ?, quantity = ?, author_id = ?, bookshelve_id = ?, synopsis = ?  WHERE id = ?', [this.title, this.page, this.quantity, this.author_id, this.bookshelve_id, this.synopsis, this.id], (err) => {
                 if (err) {
                     reject(err);
                 } else {

@@ -25,6 +25,11 @@ module.exports.showBookReviews = async (req, res) => {
             return res.status(202).json({ message: 'O Livro ainda não possui avaliações' });
         }
 
+        // Encontrar os autores das avaliações do Livro pelo ID do usuario
+        const user = await User.find({ id: reviews.user_id });
+
+        
+
         // Retorna as avaliações do livro em um array json
         res.json(reviews);
 
@@ -100,13 +105,13 @@ module.exports.editReview = async (req, res, next) => {
     const bookId = req.params.id;
 
     // Verifica se todos os campos foram preenchidos corretamente
-    if (!user_id || !reviewId ||!body || !rating) {
+    if (!user_id || !reviewId || !body || !rating) {
         return res.status(422).json({ message: 'Preencha todos os campos' });
     }
 
     body.trim()
 
-    if (body == '', user_id <= 0 ) {
+    if (body == '', user_id <= 0) {
         return res.status(422).json({ message: 'Preencha os campos com valores validos' });
     }
 
@@ -134,7 +139,7 @@ module.exports.editReview = async (req, res, next) => {
         // Atualiza o review
 
         const updatedReview = new Review({
-            book_id:bookId,
+            book_id: bookId,
             user_id,
             body,
             rating

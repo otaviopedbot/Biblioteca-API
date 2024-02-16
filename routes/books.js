@@ -24,5 +24,4 @@ router.route('/:id/reviews/:reviewId')
     .put(checkToken, ReviewController.editReview)
     .delete(checkToken, ReviewController.deleteReview);
 
-
 module.exports = router;
