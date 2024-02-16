@@ -41,6 +41,19 @@ class Book extends DefaultModel {
         });
     }
 
+    delOne() {
+        return new Promise((resolve, reject) => {
+            // Ajustando a consulta SQL para subtrair 1 do campo quantity
+            db.query('UPDATE books SET quantity = quantity - 1  WHERE id = ?', [this.id], (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(this);
+                }
+            });
+        });
+    }
+    
 }
 
 module.exports = Book;
