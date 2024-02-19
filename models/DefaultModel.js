@@ -4,9 +4,21 @@ class DefaultModel {
 
     static modelName = '';
 
-    static getAll() {
+    //getAll with pagination
+
+    static getAll(page, pageSize) {
         return new Promise((resolve, reject) => {
-            db.query(`SELECT * FROM ${this.modelName}`, (err, results) => {
+            let query = '';
+
+            if (page && pageSize) {
+                const offset = (page - 1) * pageSize;
+                const limit = parseInt(pageSize);
+                query = `SELECT * FROM ${this.modelName} LIMIT ${limit} OFFSET ${offset};`
+            } else {
+                query = `SELECT * FROM ${this.modelName}`
+            }
+
+            db.query(query, (err, results) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -16,6 +28,19 @@ class DefaultModel {
         });
     }
 
+    static countTotal() {
+        return new Promise((resolve, reject) => {
+            const query = `SELECT COUNT(*) AS total_items FROM ${this.modelName};`;
+            db.query(query, (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0].total_items);
+                }
+            });
+        });
+    }
+    
     static getById(id) {
         return new Promise((resolve, reject) => {
             db.query(`SELECT * FROM ${this.modelName} WHERE id = ?`, [id], (err, result) => {

@@ -3,8 +3,9 @@ const Customer = require('../models/Customer');
 // visualizações:
 
 module.exports.index = (req, res) => {
+    const {page, pageSize} = req.query;
 
-    Customer.getAll()
+    Customer.getAll(page,pageSize)
         .then(results => {
             res.json(results);
         })

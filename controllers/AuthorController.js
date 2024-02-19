@@ -2,15 +2,27 @@ const Author = require('../models/Author');
 
 // visualizações:
 
-module.exports.index = (req, res) => {
+module.exports.index = async (req, res) => {
+    const { page, pageSize } = req.query;
 
-    Author.getAll()
-        .then(results => {
-            res.json(results);
-        })
-        .catch(error => {
-            res.json({ message: 'Erro interno ao obter autores', error: error });
-        });
+    try {
+
+        const result = await Author.getAll(page, pageSize)
+
+        if (page && pageSize) {
+
+            const total_items = await Author.countTotal()
+            res.json({
+                data: result,
+                total_items: total_items
+            });
+        } else {
+            res.json(result);
+        }
+
+    } catch (error) {
+        res.json({ message: 'Erro interno ao obter autores', error: error });
+    }
 
 };
 

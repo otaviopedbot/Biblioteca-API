@@ -53,10 +53,11 @@ module.exports.login = async (req, res) => {
 //visualizações:
 
 module.exports.index = (req, res) => {
+    const {page, pageSize} = req.query;
 
     console.log(req.user)
 
-    User.getAll()
+    User.getAll(page,pageSize)
         .then(results => {
             res.json(results);
         })

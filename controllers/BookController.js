@@ -5,8 +5,9 @@ const Bookshelve = require('../models/Bookshelve');
 // visualizações:
 
 module.exports.index = (req, res) => {
+    const {page, pageSize} = req.query;
 
-    Book.getAll()
+    Book.getAll(page,pageSize)
         .then(results => {
             res.json(results);
         })

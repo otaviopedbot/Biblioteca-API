@@ -5,9 +5,11 @@ const Customer = require('../models/Customer');
 // visualizações:
 
 module.exports.index = async (req, res, next) => {
+    const {page, pageSize} = req.query;
+
     try {
         // Recuperar todos os aluguéis
-        const rents = await Rent.getAll();
+        const rents = await Rent.getAll(page,pageSize);
 
         // Mapear todos os aluguéis em um array de promessas
         const rentPromises = rents.map(async (rent) => {
