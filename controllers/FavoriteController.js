@@ -20,11 +20,6 @@ module.exports.showUserFavorites = async (req, res) => {
         // Encontrar os favoritos do usuário pelo ID do usuário
         const favorites = await Favorite.find({ user_id: userId });
 
-        // Verificar se o usuário possui favoritos
-        if (!favorites || favorites.length === 0) {
-            return res.status(202).json({ message: 'Usuário ainda não possui livros favoritos' });
-        }
-
         // Mapear todas as chamadas de Book.getById() em um array de promessas
         const bookPromises = favorites.map(async (item) => {
             const book = await Book.getById(item.book_id);

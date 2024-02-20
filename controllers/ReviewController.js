@@ -7,6 +7,8 @@ const Book = require('../models/Book');
 
 module.exports.showBookReviews = async (req, res) => {
     const bookId = req.params.id;
+    const { page, pageSize } = req.query;
+
 
     try {
         // Obter o Livro pelo ID
@@ -18,20 +20,39 @@ module.exports.showBookReviews = async (req, res) => {
         }
 
         // Encontrar as avaliações do Livro pelo ID do Livro
-        const reviews = await Review.find({ book_id: bookId });
+        const reviews = await Review.getById(bookId, page, pageSize);
 
         // Verificar se o livro possui avaliações
         if (!reviews || reviews.length === 0) {
             return res.status(202).json({ message: 'O Livro ainda não possui avaliações' });
         }
 
-        // Encontrar os autores das avaliações do Livro pelo ID do usuario
-        const user = await User.find({ id: reviews.user_id });
+        // Mapear todas as avaliações para adicionar o nome do usuário
+        const reviewsWithUsernames = await Promise.all(reviews.map(async (review) => {
+            const user = await User.getById(review.user_id);
+            if (user) {
+                review.username = user[0].username;
+            }
+            return review;
+        }));
 
-        
 
-        // Retorna as avaliações do livro em um array json
-        res.json(reviews);
+        if (page && pageSize) {
+
+            const total_items = await Review.countTotal(bookId)
+            
+            res.json({
+                data: reviewsWithUsernames,
+                total_items: total_items
+            });
+        } else {
+            res.json(reviewsWithUsernames);
+        }
+
+
+
+
+
 
     } catch (error) {
         res.status(500).json({ message: 'Erro interno ao obter avaliações do livro por ID', error: error });
