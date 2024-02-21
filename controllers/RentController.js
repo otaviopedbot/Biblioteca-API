@@ -8,33 +8,31 @@ module.exports.index = async (req, res, next) => {
     const {page, pageSize} = req.query;
 
     try {
-        // Recuperar todos os aluguéis
         const rents = await Rent.getAll(page,pageSize);
-
-        // Mapear todos os aluguéis em um array de promessas
-        const rentPromises = rents.map(async (rent) => {
-            // Recuperar o livro associado ao aluguel
+        const detailedRents =  await Promise.all(rents.map(async (rent) => {
             const book = await Book.getById(rent.book_id);
-            // Recuperar o cliente associado ao aluguel
             const customer = await Customer.getById(rent.customer_id);
-            // Construir o objeto de resultado para o aluguel
+
             return {
                 id: rent.id,
                 date: rent.date,
-                book_id: book[0].id,
                 book_title: book[0].title,
-                customer_id: customer[0].id,
                 customer_name: customer[0].name
             };
-        });
+        }));
 
-        // Aguardar a resolução de todas as promessas
-        const rentDetails = await Promise.all(rentPromises);
+        if (page && pageSize) {
 
-        // Retorna os detalhes de todos os aluguéis em um array json
-        res.json(rentDetails);
+            const total_items = await Rent.countTotal()
+            res.json({
+                data: detailedRents,
+                total_items: total_items
+            });
+        } else {
+            res.json(detailedRents);
+        }
     } catch (error) {
-        next(new Error('Erro interno ao buscar alugueis'));
+        res.json({ 'message': 'Erro interno ao obter aluguéis', error: error });
     }
 };
 

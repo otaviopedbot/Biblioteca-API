@@ -4,51 +4,71 @@ const Bookshelve = require('../models/Bookshelve');
 
 // visualizações:
 
-module.exports.index = (req, res) => {
-    const {page, pageSize} = req.query;
+module.exports.index = async (req, res) => {
+    const { page, pageSize } = req.query;
 
-    Book.getAll(page,pageSize)
-        .then(results => {
-            res.json(results);
-        })
-        .catch(error => {
-            res.json({ 'message': 'Erro interno ao obter livros', error: error });
-        });
+    try {
+        const books = await Book.getAll(page, pageSize);
+        const detailedBooks = await Promise.all(books.map(async (book) => {
+            const bookshelve = await Bookshelve.getById(book.bookshelve_id);
+            const author = await Author.getById(book.author_id);
+            return {
+                id: book.id,
+                title: book.title,
+                page: book.page,
+                quantity: book.quantity,
+                author: author[0].name,
+                bookshelve: bookshelve[0].name
+            };
+        }));
 
+        if (page && pageSize) {
+
+            const total_items = await Book.countTotal()
+            res.json({
+                data: detailedBooks,
+                total_items: total_items
+            });
+        } else {
+            res.json(detailedBooks);
+        }
+    } catch (error) {
+        res.json({ 'message': 'Erro interno ao obter livros', error: error });
+    }
 };
 
 module.exports.showBook = async (req, res, next) => {
     const bookId = req.params.id;
 
-        try {
-    
-            const book = await Book.getById(bookId)
-    
-            if (book.length < 0) {
-                return res.status(404).json({ message: 'Livro não encontrado' });
-            }
-    
-            // busca o Autor e a estante
-    
-            const bookshelve = await Bookshelve.getById(book[0].bookshelve_id)
-    
-            const author = await Author.getById(book[0].author_id)
-    
-            const result = {
-                id: book[0].id,
-                title: book[0].title,
-                page: book[0].page,
-                quantity: book[0].quantity,
-                synopsis: book[0].synopsis,
-                author:author[0],
-                bookshelve:bookshelve[0]
-            }
-    
-            res.json(result)
-    
-        } catch {
-            next(new Error('Erro interno ao buscar Livro'));
+    try {
+
+        const book = await Book.getById(bookId)
+
+        if (book.length < 0) {
+            return res.status(404).json({ message: 'Livro não encontrado' });
         }
+
+        // busca o Autor e a estante
+
+        const bookshelve = await Bookshelve.getById(book[0].bookshelve_id)
+
+        const author = await Author.getById(book[0].author_id)
+
+        const result = {
+            id: book[0].id,
+            title: book[0].title,
+            page: book[0].page,
+            quantity: book[0].quantity,
+            synopsis: book[0].synopsis,
+            author: author[0],
+            bookshelve: bookshelve[0]
+        }
+
+        res.json(result)
+
+    } catch {
+        next(new Error('Erro interno ao buscar Livro'));
+    }
 
 };
 
@@ -79,13 +99,13 @@ module.exports.createBook = async (req, res, next) => {
 
         // verifica se o autor e a estante existem
 
-        const existingAuthor = await Author.findOne({id:author_id});
+        const existingAuthor = await Author.findOne({ id: author_id });
 
         if (!existingAuthor) {
             return res.status(404).json({ message: 'Autor não encontrado' });
         }
 
-        const existingBookshelve = await Bookshelve.findOne({id:bookshelve_id});
+        const existingBookshelve = await Bookshelve.findOne({ id: bookshelve_id });
 
         if (!existingBookshelve) {
             return res.status(404).json({ message: 'Estante não encontrada' });
@@ -130,13 +150,13 @@ module.exports.editBook = async (req, res, next) => {
 
         // verifica se o autor e a estante existem
 
-        const existingAuthor = await Author.findOne({id:author_id});
+        const existingAuthor = await Author.findOne({ id: author_id });
 
         if (!existingAuthor) {
             return res.status(404).json({ message: 'Autor não encontrado' });
         }
 
-        const existingBookshelve = await Bookshelve.findOne({id:bookshelve_id});
+        const existingBookshelve = await Bookshelve.findOne({ id: bookshelve_id });
 
         if (!existingBookshelve) {
             return res.status(404).json({ message: 'Estante não encontrada' });
@@ -146,7 +166,7 @@ module.exports.editBook = async (req, res, next) => {
 
         const updatedBook = new Book({ title, page, quantity, author_id, bookshelve_id });
         updatedBook.id = bookId;
-        
+
         await updatedBook.update();
 
         res.json({ message: 'Livro atualizado com sucesso', updatedBook });

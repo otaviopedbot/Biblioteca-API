@@ -20,8 +20,8 @@ router.route('/:id/favorites')
     .post(checkToken, FavoriteController.createFavorite)
     .get(checkToken, FavoriteController.showUserFavorites);
 
-router.route('/:id/favorites/:favoriteId')
-    .put(checkToken, FavoriteController.editFavorite)
+router.route('/:id/favorites/:bookId')
+    // .put(checkToken, FavoriteController.editFavorite)
     .delete(checkToken, FavoriteController.deleteFavorite);
 
 // Rota para buscar usuário por nome de usuário

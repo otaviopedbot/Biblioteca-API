@@ -2,16 +2,27 @@ const Bookshelve = require('../models/Bookshelve');
 
 // visualizações:
 
-module.exports.index = (req, res) => {
-    const {page, pageSize} = req.query;
+module.exports.index = async (req, res) => {
+    const { page, pageSize } = req.query;
 
-    Bookshelve.getAll(page,pageSize)
-        .then(results => {
-            res.json(results);
-        })
-        .catch(error => {
-            res.json({ 'message': 'Erro interno ao obter Estantes', error: error });
-        });
+    try {
+
+        const result = await Bookshelve.getAll(page, pageSize)
+
+        if (page && pageSize) {
+
+            const total_items = await Bookshelve.countTotal()
+            res.json({
+                data: result,
+                total_items: total_items
+            });
+        } else {
+            res.json(result);
+        }
+
+    } catch (error) {
+        res.json({ message: 'Erro interno ao obter estantes', error: error });
+    }
 
 };
 

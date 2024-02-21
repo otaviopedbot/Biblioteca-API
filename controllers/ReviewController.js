@@ -68,8 +68,6 @@ module.exports.createReview = async (req, res, next) => {
 
     // Verifica se o livro existe
 
-    console.log(body)
-
     const bookExists = await Book.getById(bookId);
 
     if (!bookExists || Object.keys(bookExists).length === 0) {
@@ -121,18 +119,18 @@ module.exports.createReview = async (req, res, next) => {
 };
 
 module.exports.editReview = async (req, res, next) => {
-    let { user_id, body, rating } = req.body;
-    const reviewId = req.params.reviewId;
+    let { body, rating } = req.body;
+    const userId = req.params.userId;
     const bookId = req.params.id;
 
     // Verifica se todos os campos foram preenchidos corretamente
-    if (!user_id || !reviewId || !body || !rating) {
+    if (!userId || !body || !rating) {
         return res.status(422).json({ message: 'Preencha todos os campos' });
     }
 
     body.trim()
 
-    if (body == '', user_id <= 0) {
+    if (body == '', userId <= 0) {
         return res.status(422).json({ message: 'Preencha os campos com valores validos' });
     }
 
@@ -144,15 +142,15 @@ module.exports.editReview = async (req, res, next) => {
             return res.status(404).json({ message: 'Livro não encontrado' });
         }
 
-
         // Verifica se o review existe
-        const review = await Review.getById(reviewId);
+        const review = await Review.findOne({user_id: userId, book_id: bookId});
+
         if (!review) {
             return res.status(404).json({ message: 'Avaliação não encontrada' });
         }
 
         // Verifica se o usuário existe
-        const user = await User.getById(user_id);
+        const user = await User.getById(userId);
         if (!user) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
@@ -161,11 +159,12 @@ module.exports.editReview = async (req, res, next) => {
 
         const updatedReview = new Review({
             book_id: bookId,
-            user_id,
+            user_id: userId,
             body,
             rating
         })
-        updatedReview.id = reviewId
+
+        updatedReview.id = review.id
 
         await updatedReview.update();
 
@@ -177,17 +176,18 @@ module.exports.editReview = async (req, res, next) => {
 };
 
 module.exports.deleteReview = async (req, res, next) => {
-    const reviewId = req.params.reviewId;
+    const bookId = req.params.id
+    const userId = req.params.userId;
 
     try {
-        const existingReview = await Review.findOne({ id: reviewId });
+        const existingReview = await Review.findOne({ user_id: userId, book_id: bookId});
 
         if (!existingReview) {
             return res.status(404).json({ message: 'Avaliação não encontrada' });
         }
 
         // Deletar a avaliação
-        await Review.deleteById(reviewId);
+        await Review.deleteById(existingReview.id);
 
         res.json({ message: 'Avaliação excluída com sucesso' });
     } catch (error) {

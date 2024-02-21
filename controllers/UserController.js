@@ -52,18 +52,33 @@ module.exports.login = async (req, res) => {
 
 //visualizações:
 
-module.exports.index = (req, res) => {
+module.exports.index =  async (req, res) => {
     const {page, pageSize} = req.query;
 
-    console.log(req.user)
+    try {
+        const users = await User.getAll(page, pageSize);
+        const detailedUsers = await Promise.all(users.map(async (user) => {
+            return {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                is_admin: user.is_admin,
+            };
+        }));
 
-    User.getAll(page,pageSize)
-        .then(results => {
-            res.json(results);
-        })
-        .catch(error => {
-            res.json({ 'message': 'Erro interno ao obter Usuários', error: error });
-        });
+        if (page && pageSize) {
+
+            const total_items = await User.countTotal()
+            res.json({
+                data: detailedUsers,
+                total_items: total_items
+            });
+        } else {
+            res.json(detailedUsers);
+        }
+    } catch (error) {
+        res.json({ 'message': 'Erro interno ao obter Usuários', error: error });
+    }
 
 };
 

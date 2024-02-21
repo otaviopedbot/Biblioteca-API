@@ -2,16 +2,27 @@ const Customer = require('../models/Customer');
 
 // visualizações:
 
-module.exports.index = (req, res) => {
-    const {page, pageSize} = req.query;
+module.exports.index = async (req, res) => {
+    const { page, pageSize } = req.query;
 
-    Customer.getAll(page,pageSize)
-        .then(results => {
-            res.json(results);
-        })
-        .catch(error => {
-            res.json({ 'message': 'Erro interno ao obter clientes', error: error });
-        });
+    try {
+
+        const result = await Customer.getAll(page, pageSize)
+
+        if (page && pageSize) {
+
+            const total_items = await Customer.countTotal()
+            res.json({
+                data: result,
+                total_items: total_items
+            });
+        } else {
+            res.json(result);
+        }
+
+    } catch (error) {
+        res.json({ message: 'Erro interno ao obter clientes', error: error });
+    }
 
 };
 

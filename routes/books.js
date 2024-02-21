@@ -20,7 +20,7 @@ router.route('/:id/reviews')
     .post(checkToken, ReviewController.createReview)
     .get(checkToken, ReviewController.showBookReviews);
 
-router.route('/:id/reviews/:reviewId')
+router.route('/:id/reviews/:userId')
     .put(checkToken, ReviewController.editReview)
     .delete(checkToken, ReviewController.deleteReview);
 
