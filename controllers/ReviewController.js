@@ -74,13 +74,13 @@ module.exports.createReview = async (req, res, next) => {
         return res.status(404).json({ message: 'Livro não encontrado' });
     }
 
-    if (!user_id || !body || !rating) {
+    if (!user_id || !body || rating < 0 ) {
         return res.status(422).json({ message: 'Preencha todos os campos' });
     }
 
     body = body.trim();
 
-    if (body === '' || user_id <= 0) {
+    if (body === '' || user_id <= 0 || rating < 0) {
         return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
     }
 
@@ -103,11 +103,11 @@ module.exports.createReview = async (req, res, next) => {
     // Cria o favorito
 
     const review = new Review({
-        user_id: user_id,
+        user_id,
         book_id: bookId,
         body: body,
         rating: rating
-    });
+    }); 
 
     try {
         await review.save()
