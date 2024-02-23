@@ -10,11 +10,11 @@ const checkTokenAdmin = require('../middlewares/checkTokenAdmin')
 
 router.route('/')
     .get(CustomerController.index)
-    .post(CustomerController.createCustomer)
+    .post(checkTokenAdmin, CustomerController.createCustomer)
 
 router.route('/:id')
-    .put(CustomerController.editCustomer)
-    .get(CustomerController.showCustomer)
-    .delete(CustomerController.deleteCustomer)
+    .put(checkTokenAdmin, CustomerController.editCustomer)
+    .get(checkTokenAdmin, CustomerController.showCustomer)
+    .delete(checkTokenAdmin, CustomerController.deleteCustomer)
 
 module.exports = router;

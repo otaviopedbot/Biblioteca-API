@@ -57,6 +57,7 @@ module.exports.showBook = async (req, res, next) => {
         const result = {
             id: book[0].id,
             title: book[0].title,
+            cover: book[0].cover,
             page: book[0].page,
             quantity: book[0].quantity,
             synopsis: book[0].synopsis,
@@ -75,7 +76,7 @@ module.exports.showBook = async (req, res, next) => {
 // operações:
 
 module.exports.createBook = async (req, res, next) => {
-    let { title, page, quantity, author_id, bookshelve_id } = req.body;
+    let { title, page, quantity, author_id, bookshelve_id, synopsis, cover } = req.body;
 
     try {
 
@@ -83,9 +84,12 @@ module.exports.createBook = async (req, res, next) => {
             return res.status(422).json({ message: 'Preencha todos os campos' });
         }
 
+        
         title = title.trim();
+        synopsis = synopsis.trim();
+        cover = cover.trim();
 
-        if (title === '') {
+        if (title === '' || synopsis === '' || cover === '') {
             return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
         }
 
@@ -113,7 +117,7 @@ module.exports.createBook = async (req, res, next) => {
 
         // Salva o livro
 
-        const newBook = new Book({ title, page, quantity, author_id, bookshelve_id });
+        const newBook = new Book({ title, page, quantity, author_id, bookshelve_id, synopsis, cover });
 
         const savedBook = await newBook.save();
 
@@ -125,7 +129,7 @@ module.exports.createBook = async (req, res, next) => {
 
 module.exports.editBook = async (req, res, next) => {
     const bookId = req.params.id;
-    let { title, page, quantity, author_id, bookshelve_id } = req.body;
+    let { title, page, quantity, author_id, bookshelve_id, synopsis, cover } = req.body;
 
     try {
         const existingBook = await Book.findOne({ id: bookId });
@@ -139,6 +143,12 @@ module.exports.editBook = async (req, res, next) => {
         }
 
         title = title.trim();
+        synopsis = synopsis.trim();
+        cover = cover.trim();
+
+        if (title === '' || synopsis === '') {
+            return res.status(422).json({ message: 'Preencha os campos com dados válidos' });
+        }
 
         // Verifica se o titulo já existe
 
@@ -164,7 +174,7 @@ module.exports.editBook = async (req, res, next) => {
 
         // atualiza o livro
 
-        const updatedBook = new Book({ title, page, quantity, author_id, bookshelve_id });
+        const updatedBook = new Book({ title, page, quantity, author_id, bookshelve_id, synopsis, cover });
         updatedBook.id = bookId;
 
         await updatedBook.update();

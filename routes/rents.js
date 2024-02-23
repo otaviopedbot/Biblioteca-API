@@ -5,12 +5,12 @@ const checkToken = require('../middlewares/checkToken')
 const checkTokenAdmin = require('../middlewares/checkTokenAdmin')
 
 router.route('/')
-    .get(RentController.index)
-    .post(RentController.createRent)
+    .get(checkTokenAdmin, RentController.index)
+    .post(checkTokenAdmin, RentController.createRent)
 
 router.route('/:id')
-    .put(RentController.editRent)
-    .get(RentController.showRent)
-    .delete(RentController.deleteRent)
+    .put(checkTokenAdmin, RentController.editRent)
+    .get(checkTokenAdmin, RentController.showRent)
+    .delete(checkTokenAdmin, RentController.deleteRent)
 
 module.exports = router;

@@ -6,11 +6,11 @@ const checkTokenAdmin = require('../middlewares/checkTokenAdmin')
 
 router.route('/')
     .get(BookshelveController.index)
-    .post(BookshelveController.createBookshelve)
+    .post(checkTokenAdmin, BookshelveController.createBookshelve)
 
 router.route('/:id')
-    .put(BookshelveController.editBookshelve)
-    .get(BookshelveController.showBookshelve)
-    .delete(BookshelveController.deleteBookshelve)
+    .put(checkTokenAdmin, BookshelveController.editBookshelve)
+    .get(checkToken, BookshelveController.showBookshelve)
+    .delete(checkTokenAdmin, BookshelveController.deleteBookshelve)
 
 module.exports = router;

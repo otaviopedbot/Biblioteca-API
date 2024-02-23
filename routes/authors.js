@@ -8,11 +8,11 @@ const checkTokenAdmin = require('../middlewares/checkTokenAdmin')
 
 router.route('/')
     .get(AuthorController.index)
-    .post(AuthorController.createAuthor)
+    .post(checkTokenAdmin, AuthorController.createAuthor)
 
 router.route('/:id')
-    .put(AuthorController.editAuthor)
-    .get(AuthorController.showAuthor)
-    .delete(AuthorController.deleteAuthor)
+    .put(checkTokenAdmin, AuthorController.editAuthor)
+    .get(checkToken, AuthorController.showAuthor)
+    .delete(checkTokenAdmin, AuthorController.deleteAuthor)
 
 module.exports = router;

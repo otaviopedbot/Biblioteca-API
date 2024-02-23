@@ -8,12 +8,12 @@ const checkTokenAdmin = require('../middlewares/checkTokenAdmin')
 // Rotas para operações de livros
 router.route('/')
     .get(BookController.index)
-    .post(BookController.createBook)
+    .post(checkTokenAdmin, BookController.createBook)
 
 router.route('/:id')
-    .put(BookController.editBook)
-    .get(BookController.showBook)
-    .delete(BookController.deleteBook)
+    .put(checkTokenAdmin, BookController.editBook)
+    .get(checkToken,BookController.showBook)
+    .delete(checkTokenAdmin, BookController.deleteBook)
 
 // Rotas para reviews dos livros
 router.route('/:id/reviews')
