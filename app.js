@@ -6,8 +6,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 
-const UserController = require('./controllers/UserController');
-
 const customersRoutes = require('./routes/customers')
 const authorsRoutes = require('./routes/authors')
 const bookshelvesRoutes = require('./routes/bookshelves')
