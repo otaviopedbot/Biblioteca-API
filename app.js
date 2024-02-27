@@ -27,6 +27,13 @@ app.get('/', (req, res) => {
     res.send('routes: /customers, /authors, /bookshelves, /books, /rents, /register, /login');
 });
 
+const createTables = require('./database/CreateTables')
+createTables.CreateTables()
+
+const createAdmin = require('./database/CreateAdmin')
+createAdmin.CreateAdmin()
+
+
 // rotas CRUD
 
 app.use('/customers', customersRoutes);
