@@ -9,5 +9,6 @@ if [ "${1#-}" != "${1}" ] || [ -z "$(command -v "${1}")" ] || { [ -f "${1}" ] &&
 fi
 
 npm install
+npm update
 npm start
 exec "$@"
