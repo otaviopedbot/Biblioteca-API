@@ -1,4 +1,5 @@
 require('dotenv').config()
+const nodemon = require('nodemon');
 
 const express = require('express');
 
@@ -33,8 +34,7 @@ createTables.CreateTables()
 const createAdmin = require('./database/CreateAdmin')
 createAdmin.CreateAdmin()
 
-
-// rotas CRUD
+//rotas CRUD
 
 app.use('/customers', customersRoutes);
 app.use('/authors', authorsRoutes);
