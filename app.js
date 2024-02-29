@@ -1,5 +1,4 @@
 require('dotenv').config()
-const nodemon = require('nodemon');
 
 const express = require('express');
 
@@ -14,6 +13,7 @@ const booksRoutes = require('./routes/books')
 const rentsRoutes = require('./routes/rents')
 const usersRoutes = require('./routes/users')
 
+
 const app = express();
 const cors = require('cors');
 
@@ -27,12 +27,6 @@ app.set('views', path.join(__dirname, '/views'))
 app.get('/', (req, res) => {
     res.send('routes: /customers, /authors, /bookshelves, /books, /rents, /register, /login');
 });
-
-const createTables = require('./database/CreateTables')
-createTables.CreateTables()
-
-const createAdmin = require('./database/CreateAdmin')
-createAdmin.CreateAdmin()
 
 //rotas CRUD
 

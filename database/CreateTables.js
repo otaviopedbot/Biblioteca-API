@@ -1,7 +1,5 @@
-const db = require('./db')
 
-module.exports.CreateTables = () => {
-
+module.exports.CreateTables = (db) => {
 
     //criação da tabela authors
 
@@ -16,6 +14,7 @@ CREATE TABLE IF NOT EXISTS authors (
             if (err) {
                 throw err;
             }
+            console.log('tabela author criada com sucesso')
 
         });
 
@@ -32,6 +31,7 @@ CREATE TABLE IF NOT EXISTS bookshelves (
             if (err) {
                 throw err;
             }
+            console.log('tabela bookshelves criada com sucesso')
 
         });
 
@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS books (
             if (err) {
                 throw err;
             }
+            console.log('tabela books criada com sucesso')
         });
 
     //criação da tabela publishers
@@ -74,6 +75,7 @@ CREATE TABLE IF NOT EXISTS publishers (
             if (err) {
                 throw err;
             }
+            console.log('tabela publishers criada com sucesso')
 
         });
 
@@ -106,6 +108,7 @@ INSERT IGNORE INTO publishers (id, name, phone) VALUES
             if (err) {
                 throw err;
             }
+            console.log('seeds da tabela publishers criadas com sucesso')
 
         });
 
@@ -126,6 +129,7 @@ CREATE TABLE IF NOT EXISTS book_publishers (
             if (err) {
                 throw err;
             }
+            console.log('tabela book_publishers criada com sucesso')
 
         });
 
@@ -144,6 +148,7 @@ CREATE TABLE IF NOT EXISTS customers (
             if (err) {
                 throw err;
             }
+            console.log('tabela customers criada com sucesso')
 
         });
 
@@ -165,6 +170,7 @@ CREATE TABLE IF NOT EXISTS rents (
             if (err) {
                 throw err;
             }
+            console.log('tabela rents criada com sucesso')
         });
 
     //criação da tabela users
@@ -186,6 +192,7 @@ CREATE TABLE IF NOT EXISTS users (
             if (err) {
                 throw err;
             }
+            console.log('tabela users criada com sucesso')
         });
 
     //criação da tabela user_book_reviews
@@ -207,6 +214,7 @@ CREATE TABLE IF NOT EXISTS user_book_reviews (
             if (err) {
                 throw err;
             }
+            console.log('tabela user_book_reviews criada com sucesso')
 
         });
 
@@ -227,6 +235,7 @@ CREATE TABLE IF NOT EXISTS user_favorite_books (
             if (err) {
                 throw err;
             }
+            console.log('tabela user_favorite_books criada com sucesso')
         });
 
 };

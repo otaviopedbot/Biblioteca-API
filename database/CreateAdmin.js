@@ -1,7 +1,7 @@
-const db = require('./db');
+
 const bcrypt = require('bcryptjs');
 
-module.exports.CreateAdmin = async () => {
+module.exports.CreateAdmin = async (db) => {
 
     //Admin
 
