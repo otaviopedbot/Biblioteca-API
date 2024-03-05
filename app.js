@@ -17,7 +17,8 @@ const usersRoutes = require('./routes/users')
 const app = express();
 const cors = require('cors');
 
-app.use(cors({ origin: 'http://localhost:8000' }));
+const frontAppPort = process.env.FRONTAPPPORT
+app.use(cors({ origin: `http://localhost:${frontAppPort}`}));
 app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
